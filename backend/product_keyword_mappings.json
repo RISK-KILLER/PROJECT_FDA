@@ -1,0 +1,3164 @@
+{
+  "generation_info": {
+    "total_products": 48,
+    "total_documents": 22703,
+    "generation_date": "2024-01-15",
+    "method": "BM25 + TF-IDF"
+  },
+  "mappings": {
+    "milk": {
+      "product": "milk",
+      "keywords": [
+        {
+          "term": "milk",
+          "score": 0.43148932091952447
+        },
+        {
+          "term": "skim milk",
+          "score": 0.14456435946782414
+        },
+        {
+          "term": "skim",
+          "score": 0.13588503681244735
+        },
+        {
+          "term": "concentrated",
+          "score": 0.09004624391805924
+        },
+        {
+          "term": "cream",
+          "score": 0.07596506682330932
+        },
+        {
+          "term": "milk concentrated",
+          "score": 0.06319562131791981
+        },
+        {
+          "term": "dry",
+          "score": 0.06185242651918292
+        },
+        {
+          "term": "condensed",
+          "score": 0.05797697702989431
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 131.120",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 1
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "dairy"
+    },
+    "cheese": {
+      "product": "cheese",
+      "keywords": [
+        {
+          "term": "cheese",
+          "score": 0.5298985803421645
+        },
+        {
+          "term": "weight",
+          "score": 0.15890515294876217
+        },
+        {
+          "term": "cheese manufacturing",
+          "score": 0.12011264487272866
+        },
+        {
+          "term": "manufacturing",
+          "score": 0.12011264487272866
+        },
+        {
+          "term": "percent",
+          "score": 0.07788915959899449
+        },
+        {
+          "term": "skim",
+          "score": 0.07645338289199025
+        },
+        {
+          "term": "percent total",
+          "score": 0.06653088960100062
+        },
+        {
+          "term": "total",
+          "score": 0.06653088960100062
+        }
+      ],
+      "cfr_sections": [],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "dairy"
+    },
+    "butter": {
+      "product": "butter",
+      "keywords": [
+        {
+          "term": "butter",
+          "score": 0.2139024282143506
+        },
+        {
+          "term": "peanut",
+          "score": 0.11487054200413478
+        },
+        {
+          "term": "peanut butter",
+          "score": 0.0875515693997672
+        },
+        {
+          "term": "product",
+          "score": 0.08198217873998094
+        },
+        {
+          "term": "fruit",
+          "score": 0.0784895561398931
+        },
+        {
+          "term": "tbsp",
+          "score": 0.059833522647306604
+        },
+        {
+          "term": "powder",
+          "score": 0.0580713815606946
+        },
+        {
+          "term": "margarine",
+          "score": 0.05770309551112544
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.22",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 2
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "dairy"
+    },
+    "ice cream": {
+      "product": "ice cream",
+      "keywords": [
+        {
+          "term": "ice",
+          "score": 0.12779514603794295
+        },
+        {
+          "term": "ice cream",
+          "score": 0.12779514603794295
+        },
+        {
+          "term": "cream",
+          "score": 0.12666702889167455
+        },
+        {
+          "term": "optional",
+          "score": 0.1049458769457929
+        },
+        {
+          "term": "milk",
+          "score": 0.08553806985537657
+        },
+        {
+          "term": "food",
+          "score": 0.0751321281129271
+        },
+        {
+          "term": "used",
+          "score": 0.07325164914385664
+        },
+        {
+          "term": "paragraph",
+          "score": 0.06954357876174387
+        }
+      ],
+      "cfr_sections": [],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "dairy"
+    },
+    "yogurt": {
+      "product": "yogurt",
+      "keywords": [
+        {
+          "term": "milk",
+          "score": 0.10714915927356668
+        },
+        {
+          "term": "ingredients",
+          "score": 0.09916578568284065
+        },
+        {
+          "term": "yogurt",
+          "score": 0.09686211018693583
+        },
+        {
+          "term": "milkfat",
+          "score": 0.08727050112000326
+        },
+        {
+          "term": "percent",
+          "score": 0.08254060410603181
+        },
+        {
+          "term": "food",
+          "score": 0.07369018779074257
+        },
+        {
+          "term": "specified",
+          "score": 0.06436141284863539
+        },
+        {
+          "term": "paragraph",
+          "score": 0.06101630239930246
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 10.30",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.11",
+          "frequency": 2
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "dairy"
+    },
+    "juice": {
+      "product": "juice",
+      "keywords": [
+        {
+          "term": "juice",
+          "score": 0.3037168660768289
+        },
+        {
+          "term": "percent",
+          "score": 0.08947114543925158
+        },
+        {
+          "term": "orange",
+          "score": 0.07562371154415823
+        },
+        {
+          "term": "orange juice",
+          "score": 0.07562371154415823
+        },
+        {
+          "term": "beverage",
+          "score": 0.07539779677634048
+        },
+        {
+          "term": "percent juice",
+          "score": 0.06856701794627136
+        },
+        {
+          "term": "juice beverage",
+          "score": 0.051513935804551436
+        },
+        {
+          "term": "lemon",
+          "score": 0.05107106613071592
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.30",
+          "frequency": 8
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 156.3",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.1",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.2",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.3",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.4",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.5",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.105",
+          "frequency": 3
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "beverage"
+    },
+    "coffee": {
+      "product": "coffee",
+      "keywords": [
+        {
+          "term": "coffee",
+          "score": 0.19240412413135027
+        },
+        {
+          "term": "tea",
+          "score": 0.12480500361527233
+        },
+        {
+          "term": "coffee tea",
+          "score": 0.10968189479853171
+        },
+        {
+          "term": "foods",
+          "score": 0.09965456699042928
+        },
+        {
+          "term": "beans",
+          "score": 0.08694403323199991
+        },
+        {
+          "term": "type",
+          "score": 0.0853506895940915
+        },
+        {
+          "term": "coffee beans",
+          "score": 0.0850727146430297
+        },
+        {
+          "term": "policy",
+          "score": 0.06117319838584363
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.14",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.13",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.11",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.10",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.1",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.2",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.3",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.4",
+          "frequency": 1
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "beverage"
+    },
+    "wine": {
+      "product": "wine",
+      "keywords": [
+        {
+          "term": "wine",
+          "score": 0.08623075022054957
+        },
+        {
+          "term": "alcohol",
+          "score": 0.08126810122247183
+        },
+        {
+          "term": "beverages",
+          "score": 0.0597478426621468
+        },
+        {
+          "term": "food",
+          "score": 0.05535955721411565
+        },
+        {
+          "term": "acid",
+          "score": 0.04470720640396412
+        },
+        {
+          "term": "powder",
+          "score": 0.04275084063222408
+        },
+        {
+          "term": "lead",
+          "score": 0.04222833196781956
+        },
+        {
+          "term": "capsule",
+          "score": 0.04212153650819232
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.11",
+          "frequency": 6
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.14",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.13",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.10",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 1
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "beverage"
+    },
+    "tea": {
+      "product": "tea",
+      "keywords": [
+        {
+          "term": "tea",
+          "score": 0.12312322470682817
+        },
+        {
+          "term": "coffee",
+          "score": 0.09222444628512033
+        },
+        {
+          "term": "coffee tea",
+          "score": 0.0811151731348075
+        },
+        {
+          "term": "green",
+          "score": 0.07686654655473121
+        },
+        {
+          "term": "green tea",
+          "score": 0.07686654655473121
+        },
+        {
+          "term": "used",
+          "score": 0.0752941092732081
+        },
+        {
+          "term": "food",
+          "score": 0.07321744774919539
+        },
+        {
+          "term": "covered",
+          "score": 0.06108630885570937
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 9
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 7
+        },
+        {
+          "section": "21 CFR 101.14",
+          "frequency": 7
+        },
+        {
+          "section": "21 CFR 10.115",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.13",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 170.3",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.1",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.2",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.3",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.4",
+          "frequency": 4
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "beverage"
+    },
+    "beer": {
+      "product": "beer",
+      "keywords": [
+        {
+          "term": "menu",
+          "score": 0.10575341688987075
+        },
+        {
+          "term": "hops",
+          "score": 0.10323369957325265
+        },
+        {
+          "term": "beer",
+          "score": 0.09654120932345098
+        },
+        {
+          "term": "extract",
+          "score": 0.0866192830259488
+        },
+        {
+          "term": "hops extract",
+          "score": 0.08258695965860213
+        },
+        {
+          "term": "used",
+          "score": 0.08098526345268717
+        },
+        {
+          "term": "calorie",
+          "score": 0.06618820594539912
+        },
+        {
+          "term": "use",
+          "score": 0.062192041536500466
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.11",
+          "frequency": 12
+        },
+        {
+          "section": "21 CFR 101.14",
+          "frequency": 8
+        },
+        {
+          "section": "21 CFR 101.13",
+          "frequency": 8
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 8
+        },
+        {
+          "section": "21 CFR 101.10",
+          "frequency": 8
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "beverage"
+    },
+    "oil": {
+      "product": "oil",
+      "keywords": [
+        {
+          "term": "oil",
+          "score": 0.29802163382000907
+        },
+        {
+          "term": "menhaden",
+          "score": 0.06137737793980432
+        },
+        {
+          "term": "fatty",
+          "score": 0.05802983995186907
+        },
+        {
+          "term": "menhaden oil",
+          "score": 0.05333537751343553
+        },
+        {
+          "term": "olive",
+          "score": 0.05058340263773938
+        },
+        {
+          "term": "olive oil",
+          "score": 0.05058340263773938
+        },
+        {
+          "term": "oils",
+          "score": 0.05039896441677465
+        },
+        {
+          "term": "following",
+          "score": 0.04882800212224628
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.14",
+          "frequency": 8
+        },
+        {
+          "section": "21 CFR 101.62",
+          "frequency": 7
+        },
+        {
+          "section": "21 CFR 101.4",
+          "frequency": 6
+        },
+        {
+          "section": "21 CFR 101.1",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.2",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.3",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.5",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.105",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 1.21",
+          "frequency": 5
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "seasoning"
+    },
+    "salt": {
+      "product": "salt",
+      "keywords": [
+        {
+          "term": "salt",
+          "score": 0.273488736061734
+        },
+        {
+          "term": "seasoning",
+          "score": 0.07465495118017759
+        },
+        {
+          "term": "statement",
+          "score": 0.0698063775984545
+        },
+        {
+          "term": "food",
+          "score": 0.06675845220039911
+        },
+        {
+          "term": "used",
+          "score": 0.06625044337975561
+        },
+        {
+          "term": "label",
+          "score": 0.06611177874943455
+        },
+        {
+          "term": "added",
+          "score": 0.05982878836892258
+        },
+        {
+          "term": "water",
+          "score": 0.054335885975323364
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 6
+        },
+        {
+          "section": "21 CFR 100.155",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 184.1265",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 184.1634",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 104.20",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 107.100",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 137.165",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 130.10",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.54",
+          "frequency": 2
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "seasoning"
+    },
+    "sugar": {
+      "product": "sugar",
+      "keywords": [
+        {
+          "term": "sugar",
+          "score": 0.27533819141017873
+        },
+        {
+          "term": "food",
+          "score": 0.09087715605540561
+        },
+        {
+          "term": "sirup",
+          "score": 0.08668541812102634
+        },
+        {
+          "term": "use",
+          "score": 0.07684299604980269
+        },
+        {
+          "term": "sugar beet",
+          "score": 0.0704477159592426
+        },
+        {
+          "term": "beet",
+          "score": 0.06567513252157699
+        },
+        {
+          "term": "cane",
+          "score": 0.06292328344986108
+        },
+        {
+          "term": "cane sugar",
+          "score": 0.05695032890348567
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.54",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.60",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 104.20",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.13",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 10.115",
+          "frequency": 1
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "seasoning"
+    },
+    "pepper": {
+      "product": "pepper",
+      "keywords": [
+        {
+          "term": "pepper",
+          "score": 0.0843391156484627
+        },
+        {
+          "term": "insect",
+          "score": 0.08420175161807784
+        },
+        {
+          "term": "vegetables",
+          "score": 0.06979437751167013
+        },
+        {
+          "term": "excreta",
+          "score": 0.06722129754062936
+        },
+        {
+          "term": "mammalian",
+          "score": 0.05936957332089422
+        },
+        {
+          "term": "mammalian excreta",
+          "score": 0.05936957332089422
+        },
+        {
+          "term": "ground",
+          "score": 0.05769458670658416
+        },
+        {
+          "term": "average",
+          "score": 0.0555693967029106
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.4",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.44",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.1",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.2",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.3",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.5",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.105",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 1.21",
+          "frequency": 2
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "seasoning"
+    },
+    "fish": {
+      "product": "fish",
+      "keywords": [
+        {
+          "term": "fish",
+          "score": 0.29814440638526146
+        },
+        {
+          "term": "products",
+          "score": 0.08673162263410877
+        },
+        {
+          "term": "examined",
+          "score": 0.05835963473749105
+        },
+        {
+          "term": "ingredient",
+          "score": 0.05667305951475795
+        },
+        {
+          "term": "fda",
+          "score": 0.051959223820660524
+        },
+        {
+          "term": "fillets",
+          "score": 0.04768762591265876
+        },
+        {
+          "term": "histamine",
+          "score": 0.04567528126795943
+        },
+        {
+          "term": "include",
+          "score": 0.044350897256446455
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.3",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.4",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.100",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.1",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.2",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.5",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.105",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 1.21",
+          "frequency": 2
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "meat"
+    },
+    "tuna": {
+      "product": "tuna",
+      "keywords": [
+        {
+          "term": "tuna",
+          "score": 0.16462825845891976
+        },
+        {
+          "term": "paragraph",
+          "score": 0.11585503771298492
+        },
+        {
+          "term": "optional",
+          "score": 0.08622617086326934
+        },
+        {
+          "term": "specified",
+          "score": 0.07471857579627274
+        },
+        {
+          "term": "oil",
+          "score": 0.07329636308912699
+        },
+        {
+          "term": "canned",
+          "score": 0.07168959680826877
+        },
+        {
+          "term": "canned tuna",
+          "score": 0.06765011919662212
+        },
+        {
+          "term": "color",
+          "score": 0.06550495524675087
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 172.175",
+          "frequency": 2
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "meat"
+    },
+    "salmon": {
+      "product": "salmon",
+      "keywords": [
+        {
+          "term": "salmon",
+          "score": 0.13071496987267447
+        },
+        {
+          "term": "food",
+          "score": 0.0960549787128026
+        },
+        {
+          "term": "species",
+          "score": 0.06214233343873463
+        },
+        {
+          "term": "paragraph",
+          "score": 0.06100623127192589
+        },
+        {
+          "term": "policy",
+          "score": 0.055380903632523945
+        },
+        {
+          "term": "added",
+          "score": 0.05422448847399528
+        },
+        {
+          "term": "canned",
+          "score": 0.05362980285129533
+        },
+        {
+          "term": "guidance",
+          "score": 0.05265630313115506
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 172.175",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 10.30",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.11",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.4",
+          "frequency": 1
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "meat"
+    },
+    "chicken": {
+      "product": "chicken",
+      "keywords": [
+        {
+          "term": "sauce",
+          "score": 0.07929526004154722
+        },
+        {
+          "term": "chicken",
+          "score": 0.07210716187581503
+        },
+        {
+          "term": "bouillon",
+          "score": 0.06996994098648543
+        },
+        {
+          "term": "feed",
+          "score": 0.0698873702724268
+        },
+        {
+          "term": "food",
+          "score": 0.06749622263645375
+        },
+        {
+          "term": "color",
+          "score": 0.0671190815162871
+        },
+        {
+          "term": "nte",
+          "score": 0.06597071404501965
+        },
+        {
+          "term": "menu",
+          "score": 0.06084695123505679
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 73.37",
+          "frequency": 6
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 6
+        },
+        {
+          "section": "21 CFR 101.11",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 73.32",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 73.50",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 73.75",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 73.185",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 73.200",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 73.275",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 73.295",
+          "frequency": 4
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "meat"
+    },
+    "beef": {
+      "product": "beef",
+      "keywords": [
+        {
+          "term": "cattle",
+          "score": 0.09781512227818712
+        },
+        {
+          "term": "oil",
+          "score": 0.066632889712351
+        },
+        {
+          "term": "food",
+          "score": 0.06441152470096442
+        },
+        {
+          "term": "beef",
+          "score": 0.06371603464567047
+        },
+        {
+          "term": "menu",
+          "score": 0.05854917825433548
+        },
+        {
+          "term": "products",
+          "score": 0.05483828828512871
+        },
+        {
+          "term": "fda",
+          "score": 0.053694130304072905
+        },
+        {
+          "term": "bouillon",
+          "score": 0.04863305686325967
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.11",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.14",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.13",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.10",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 82.51",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 82.1051",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 82.2051",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 74.340",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 73",
+          "frequency": 1
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "meat"
+    },
+    "corn": {
+      "product": "corn",
+      "keywords": [
+        {
+          "term": "corn",
+          "score": 0.2676579057269254
+        },
+        {
+          "term": "canned",
+          "score": 0.08626527609233856
+        },
+        {
+          "term": "meal",
+          "score": 0.08088731334336549
+        },
+        {
+          "term": "yellow",
+          "score": 0.07835351657582541
+        },
+        {
+          "term": "corn meal",
+          "score": 0.07525119618030446
+        },
+        {
+          "term": "sirup",
+          "score": 0.07465593413144682
+        },
+        {
+          "term": "yellow corn",
+          "score": 0.07446373156552764
+        },
+        {
+          "term": "white",
+          "score": 0.07294606197170103
+        }
+      ],
+      "cfr_sections": [],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "grain"
+    },
+    "wheat": {
+      "product": "wheat",
+      "keywords": [
+        {
+          "term": "wheat",
+          "score": 0.22786568759879908
+        },
+        {
+          "term": "soy",
+          "score": 0.12233974921404459
+        },
+        {
+          "term": "macaroni",
+          "score": 0.10416169911955361
+        },
+        {
+          "term": "wheat soy",
+          "score": 0.10346354091711427
+        },
+        {
+          "term": "spaghetti",
+          "score": 0.09257887068775504
+        },
+        {
+          "term": "flour",
+          "score": 0.08284341332263927
+        },
+        {
+          "term": "vermicelli",
+          "score": 0.07919788057235012
+        },
+        {
+          "term": "product",
+          "score": 0.0789395510198534
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.4",
+          "frequency": 1
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "grain"
+    },
+    "bread": {
+      "product": "bread",
+      "keywords": [
+        {
+          "term": "bread",
+          "score": 0.1282701502689229
+        },
+        {
+          "term": "egg",
+          "score": 0.11121724297900648
+        },
+        {
+          "term": "rolls",
+          "score": 0.08590938903817315
+        },
+        {
+          "term": "milk",
+          "score": 0.07693516204471702
+        },
+        {
+          "term": "buns",
+          "score": 0.07426421220682664
+        },
+        {
+          "term": "honey",
+          "score": 0.06898759579467179
+        },
+        {
+          "term": "food",
+          "score": 0.06731098137640981
+        },
+        {
+          "term": "wheat",
+          "score": 0.06653985907506255
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 3
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "grain"
+    },
+    "rice": {
+      "product": "rice",
+      "keywords": [
+        {
+          "term": "rice",
+          "score": 0.14655846777786
+        },
+        {
+          "term": "enriched",
+          "score": 0.07290934544632868
+        },
+        {
+          "term": "substances",
+          "score": 0.06993868627584168
+        },
+        {
+          "term": "bars",
+          "score": 0.06982329261473746
+        },
+        {
+          "term": "referred",
+          "score": 0.0670778029882628
+        },
+        {
+          "term": "used",
+          "score": 0.06671779755065492
+        },
+        {
+          "term": "paragraph",
+          "score": 0.0608373787880093
+        },
+        {
+          "term": "sauce",
+          "score": 0.057672191025026055
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 4
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "grain"
+    },
+    "cereal": {
+      "product": "cereal",
+      "keywords": [
+        {
+          "term": "bars",
+          "score": 0.1275200519627838
+        },
+        {
+          "term": "cereal",
+          "score": 0.09797067742363871
+        },
+        {
+          "term": "cup",
+          "score": 0.07002790113449882
+        },
+        {
+          "term": "product",
+          "score": 0.06796505294700486
+        },
+        {
+          "term": "cereals",
+          "score": 0.05536879297360968
+        },
+        {
+          "term": "breakfast",
+          "score": 0.052732782038991545
+        },
+        {
+          "term": "rice",
+          "score": 0.04789772711061843
+        },
+        {
+          "term": "chapter",
+          "score": 0.04589382417984415
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 8
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.14",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.13",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 10.1",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 10.115",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 104.20",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 137.165",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.54",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.65",
+          "frequency": 2
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "grain"
+    },
+    "tomato": {
+      "product": "tomato",
+      "keywords": [
+        {
+          "term": "tomato",
+          "score": 0.2609642113353138
+        },
+        {
+          "term": "concentrate",
+          "score": 0.078808542618374
+        },
+        {
+          "term": "juice",
+          "score": 0.07167600287523188
+        },
+        {
+          "term": "sauce",
+          "score": 0.07118705089276246
+        },
+        {
+          "term": "puree",
+          "score": 0.06780251411331475
+        },
+        {
+          "term": "tomato juice",
+          "score": 0.06469282698609155
+        },
+        {
+          "term": "tomato puree",
+          "score": 0.06282688043444007
+        },
+        {
+          "term": "percent",
+          "score": 0.061069450177783924
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.4",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 155.191",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.1",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.2",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.3",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.5",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.105",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 1.21",
+          "frequency": 1
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "vegetable"
+    },
+    "potato": {
+      "product": "potato",
+      "keywords": [
+        {
+          "term": "potato",
+          "score": 0.14480573925987922
+        },
+        {
+          "term": "potatoes",
+          "score": 0.09933414447103128
+        },
+        {
+          "term": "chips",
+          "score": 0.09652208243908386
+        },
+        {
+          "term": "potato chips",
+          "score": 0.09614796762509158
+        },
+        {
+          "term": "sweet",
+          "score": 0.072857769045479
+        },
+        {
+          "term": "words",
+          "score": 0.05163494958924708
+        },
+        {
+          "term": "salad",
+          "score": 0.051456161765023344
+        },
+        {
+          "term": "office",
+          "score": 0.05076765078595678
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 102.41",
+          "frequency": 6
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 4
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "vegetable"
+    },
+    "onion": {
+      "product": "onion",
+      "keywords": [
+        {
+          "term": "salt",
+          "score": 0.0926559784643544
+        },
+        {
+          "term": "peppers",
+          "score": 0.08217715189097126
+        },
+        {
+          "term": "onion",
+          "score": 0.0819223580427354
+        },
+        {
+          "term": "seasoning",
+          "score": 0.0685692242868058
+        },
+        {
+          "term": "onion rings",
+          "score": 0.05906631061334979
+        },
+        {
+          "term": "rings",
+          "score": 0.05906631061334979
+        },
+        {
+          "term": "used",
+          "score": 0.05567374473033473
+        },
+        {
+          "term": "fresh",
+          "score": 0.055375915285225674
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 10
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 8
+        },
+        {
+          "section": "21 CFR 101.13",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.14",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.11",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.22",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.10",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 102.39",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.1",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.2",
+          "frequency": 1
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "vegetable"
+    },
+    "garlic": {
+      "product": "garlic",
+      "keywords": [
+        {
+          "term": "salt",
+          "score": 0.1199365407560965
+        },
+        {
+          "term": "used",
+          "score": 0.08673321704378621
+        },
+        {
+          "term": "garlic",
+          "score": 0.084418344577436
+        },
+        {
+          "term": "oil",
+          "score": 0.0843426044681251
+        },
+        {
+          "term": "seasoning",
+          "score": 0.07764912969375107
+        },
+        {
+          "term": "paste",
+          "score": 0.07620723391207947
+        },
+        {
+          "term": "spices",
+          "score": 0.07586094694889271
+        },
+        {
+          "term": "tsp",
+          "score": 0.07359338595618585
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 7
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 7
+        },
+        {
+          "section": "21 CFR 101.22",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.14",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.13",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 182",
+          "frequency": 1
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "vegetable"
+    },
+    "carrot": {
+      "product": "carrot",
+      "keywords": [
+        {
+          "term": "color",
+          "score": 0.10365985170956823
+        },
+        {
+          "term": "listed",
+          "score": 0.06907572891868316
+        },
+        {
+          "term": "21 cfr",
+          "score": 0.060808058811922264
+        },
+        {
+          "term": "cfr",
+          "score": 0.060808058811922264
+        },
+        {
+          "term": "additives",
+          "score": 0.05924753916395251
+        },
+        {
+          "term": "color additives",
+          "score": 0.05924753916395251
+        },
+        {
+          "term": "carrot",
+          "score": 0.05596936409083949
+        },
+        {
+          "term": "additive",
+          "score": 0.0550578259265395
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 73.37",
+          "frequency": 14
+        },
+        {
+          "section": "21 CFR 73.50",
+          "frequency": 14
+        },
+        {
+          "section": "21 CFR 73.32",
+          "frequency": 7
+        },
+        {
+          "section": "21 CFR 73.75",
+          "frequency": 7
+        },
+        {
+          "section": "21 CFR 73.185",
+          "frequency": 7
+        },
+        {
+          "section": "21 CFR 73.200",
+          "frequency": 7
+        },
+        {
+          "section": "21 CFR 73.275",
+          "frequency": 7
+        },
+        {
+          "section": "21 CFR 73.295",
+          "frequency": 7
+        },
+        {
+          "section": "21 CFR 73.315",
+          "frequency": 7
+        },
+        {
+          "section": "21 CFR 73.352",
+          "frequency": 7
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "vegetable"
+    },
+    "orange": {
+      "product": "orange",
+      "keywords": [
+        {
+          "term": "orange",
+          "score": 0.19013369343102315
+        },
+        {
+          "term": "juice",
+          "score": 0.18973359324229316
+        },
+        {
+          "term": "orange juice",
+          "score": 0.18973359324229316
+        },
+        {
+          "term": "concentrated",
+          "score": 0.10265828322337747
+        },
+        {
+          "term": "concentrated orange",
+          "score": 0.09661497815084065
+        },
+        {
+          "term": "food",
+          "score": 0.0738045046182024
+        },
+        {
+          "term": "food orange",
+          "score": 0.06904689190038006
+        },
+        {
+          "term": "manufacturing",
+          "score": 0.06027566719905575
+        }
+      ],
+      "cfr_sections": [],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "fruit"
+    },
+    "pineapple": {
+      "product": "pineapple",
+      "keywords": [
+        {
+          "term": "pineapple",
+          "score": 0.1663891229164448
+        },
+        {
+          "term": "canned",
+          "score": 0.1259614284233874
+        },
+        {
+          "term": "canned pineapple",
+          "score": 0.1259614284233874
+        },
+        {
+          "term": "juice",
+          "score": 0.11534285358251524
+        },
+        {
+          "term": "pineapple juice",
+          "score": 0.11534285358251524
+        },
+        {
+          "term": "requirements",
+          "score": 0.08844819739211485
+        },
+        {
+          "term": "paragraph",
+          "score": 0.08170406510090117
+        },
+        {
+          "term": "quality",
+          "score": 0.07925114611174136
+        }
+      ],
+      "cfr_sections": [],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "fruit"
+    },
+    "apple": {
+      "product": "apple",
+      "keywords": [
+        {
+          "term": "juice",
+          "score": 0.203682726853665
+        },
+        {
+          "term": "apple",
+          "score": 0.12008886368941114
+        },
+        {
+          "term": "apple juice",
+          "score": 0.09629012320829293
+        },
+        {
+          "term": "patulin",
+          "score": 0.06153154208313011
+        },
+        {
+          "term": "beverage",
+          "score": 0.06103055536972292
+        },
+        {
+          "term": "product",
+          "score": 0.05286138023139995
+        },
+        {
+          "term": "apples",
+          "score": 0.052594026040280704
+        },
+        {
+          "term": "fruit",
+          "score": 0.05224527041338021
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.30",
+          "frequency": 14
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 7
+        },
+        {
+          "section": "21 CFR 101.45",
+          "frequency": 6
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 6
+        },
+        {
+          "section": "21 CFR 101.44",
+          "frequency": 6
+        },
+        {
+          "section": "21 CFR 101.36",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.13",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.54",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.60",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.79",
+          "frequency": 5
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "fruit"
+    },
+    "grape": {
+      "product": "grape",
+      "keywords": [
+        {
+          "term": "juice",
+          "score": 0.1312407831304738
+        },
+        {
+          "term": "grape",
+          "score": 0.10357181405664459
+        },
+        {
+          "term": "color",
+          "score": 0.08460207570694588
+        },
+        {
+          "term": "fruit",
+          "score": 0.08298790503461431
+        },
+        {
+          "term": "ingredients",
+          "score": 0.06724530979642993
+        },
+        {
+          "term": "paragraph",
+          "score": 0.06337830969275363
+        },
+        {
+          "term": "grape juice",
+          "score": 0.06051382973781795
+        },
+        {
+          "term": "used",
+          "score": 0.05472957409191291
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.1",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.2",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.3",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.4",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.5",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.105",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 1.21",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.15",
+          "frequency": 1
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "fruit"
+    },
+    "strawberry": {
+      "product": "strawberry",
+      "keywords": [
+        {
+          "term": "flavor",
+          "score": 0.1862851971173354
+        },
+        {
+          "term": "strawberry",
+          "score": 0.10803448681577768
+        },
+        {
+          "term": "juice",
+          "score": 0.0819478320221455
+        },
+        {
+          "term": "artificial",
+          "score": 0.07125600200239304
+        },
+        {
+          "term": "characterizing",
+          "score": 0.0697392875224453
+        },
+        {
+          "term": "food",
+          "score": 0.06184846350219697
+        },
+        {
+          "term": "characterizing flavor",
+          "score": 0.05888455653144602
+        },
+        {
+          "term": "product",
+          "score": 0.04786945192881742
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.1",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.2",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.3",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.4",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.5",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.105",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 1.21",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.15",
+          "frequency": 2
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "fruit"
+    },
+    "chocolate": {
+      "product": "chocolate",
+      "keywords": [
+        {
+          "term": "chocolate",
+          "score": 0.17029786278074682
+        },
+        {
+          "term": "milk chocolate",
+          "score": 0.06741371042041028
+        },
+        {
+          "term": "milk",
+          "score": 0.06637289202311718
+        },
+        {
+          "term": "sweet",
+          "score": 0.06610329541982082
+        },
+        {
+          "term": "ingredients",
+          "score": 0.06082355444754568
+        },
+        {
+          "term": "chocolate liquor",
+          "score": 0.0597747737018093
+        },
+        {
+          "term": "liquor",
+          "score": 0.0597747737018093
+        },
+        {
+          "term": "specified",
+          "score": 0.0586594143811076
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 163.111",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 163.153",
+          "frequency": 1
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "processed"
+    },
+    "candy": {
+      "product": "candy",
+      "keywords": [
+        {
+          "term": "candy",
+          "score": 0.21674307807628596
+        },
+        {
+          "term": "hard",
+          "score": 0.16820546200500192
+        },
+        {
+          "term": "chapter",
+          "score": 0.15656721457085954
+        },
+        {
+          "term": "candy 170",
+          "score": 0.14712098620354291
+        },
+        {
+          "term": "hard candy",
+          "score": 0.14581350843965196
+        },
+        {
+          "term": "soft",
+          "score": 0.12171062919924966
+        },
+        {
+          "term": "soft candy",
+          "score": 0.12171062919924966
+        },
+        {
+          "term": "chapter hard",
+          "score": 0.10057131425493407
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 1
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "processed"
+    },
+    "cake": {
+      "product": "cake",
+      "keywords": [
+        {
+          "term": "cake",
+          "score": 0.166405756222646
+        },
+        {
+          "term": "percent",
+          "score": 0.0942125466390312
+        },
+        {
+          "term": "exceed",
+          "score": 0.0808862795564815
+        },
+        {
+          "term": "polysorbate",
+          "score": 0.0798238520518981
+        },
+        {
+          "term": "fruit",
+          "score": 0.07563667937122531
+        },
+        {
+          "term": "weight",
+          "score": 0.07408798401381456
+        },
+        {
+          "term": "cakes",
+          "score": 0.07228435788194638
+        },
+        {
+          "term": "used",
+          "score": 0.07105148169062118
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 12
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 11
+        },
+        {
+          "section": "21 CFR 101.13",
+          "frequency": 6
+        },
+        {
+          "section": "21 CFR 101.14",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.56",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.1",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.2",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.3",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.4",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.5",
+          "frequency": 3
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "processed"
+    },
+    "cookie": {
+      "product": "cookie",
+      "keywords": [
+        {
+          "term": "label",
+          "score": 0.10230187901620362
+        },
+        {
+          "term": "food",
+          "score": 0.09722044465765689
+        },
+        {
+          "term": "cookie",
+          "score": 0.07403183394978882
+        },
+        {
+          "term": "substance",
+          "score": 0.07133799566191053
+        },
+        {
+          "term": "product",
+          "score": 0.07087552482101528
+        },
+        {
+          "term": "products",
+          "score": 0.056853369116845784
+        },
+        {
+          "term": "use",
+          "score": 0.05578260000954673
+        },
+        {
+          "term": "used",
+          "score": 0.054120240345633674
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 15
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 9
+        },
+        {
+          "section": "21 CFR 101.13",
+          "frequency": 8
+        },
+        {
+          "section": "21 CFR 101.14",
+          "frequency": 8
+        },
+        {
+          "section": "21 CFR 182.1",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.11",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.1",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.2",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.3",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.4",
+          "frequency": 3
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "processed"
+    },
+    "shrimp": {
+      "product": "shrimp",
+      "keywords": [
+        {
+          "term": "shrimp",
+          "score": 0.21783254242875802
+        },
+        {
+          "term": "breaded",
+          "score": 0.0873642325338513
+        },
+        {
+          "term": "food",
+          "score": 0.0687873348754704
+        },
+        {
+          "term": "word",
+          "score": 0.06585539581105344
+        },
+        {
+          "term": "material",
+          "score": 0.06354700136479205
+        },
+        {
+          "term": "breaded shrimp",
+          "score": 0.06015306918191225
+        },
+        {
+          "term": "size",
+          "score": 0.06013787471049582
+        },
+        {
+          "term": "shrimp material",
+          "score": 0.058318999542705474
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 161.173",
+          "frequency": 2
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "other"
+    },
+    "crab": {
+      "product": "crab",
+      "keywords": [
+        {
+          "term": "fish",
+          "score": 0.1041921844890299
+        },
+        {
+          "term": "food",
+          "score": 0.08546906756991202
+        },
+        {
+          "term": "seafood",
+          "score": 0.08517577409975079
+        },
+        {
+          "term": "crab",
+          "score": 0.08382139798536817
+        },
+        {
+          "term": "crabmeat",
+          "score": 0.07992077256635585
+        },
+        {
+          "term": "ingredient",
+          "score": 0.07753517457838888
+        },
+        {
+          "term": "shellfish",
+          "score": 0.06650081074129748
+        },
+        {
+          "term": "meat",
+          "score": 0.0600084186875937
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.3",
+          "frequency": 10
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 6
+        },
+        {
+          "section": "21 CFR 101.4",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.100",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 10.115",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.13",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.14",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.1",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.2",
+          "frequency": 3
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "other"
+    },
+    "spinach": {
+      "product": "spinach",
+      "keywords": [
+        {
+          "term": "spinach",
+          "score": 0.09955175722086716
+        },
+        {
+          "term": "average",
+          "score": 0.06710233487602985
+        },
+        {
+          "term": "reference",
+          "score": 0.057435620518244926
+        },
+        {
+          "term": "food",
+          "score": 0.05707398469061477
+        },
+        {
+          "term": "fat",
+          "score": 0.04538975350344672
+        },
+        {
+          "term": "foods",
+          "score": 0.04529803132080652
+        },
+        {
+          "term": "type",
+          "score": 0.04463908296140945
+        },
+        {
+          "term": "used",
+          "score": 0.04361021389521445
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 10.115",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.14",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.11",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 10.1",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 170.3",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.83",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.13",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.10",
+          "frequency": 1
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "other"
+    },
+    "cabbage": {
+      "product": "cabbage",
+      "keywords": [
+        {
+          "term": "food",
+          "score": 0.08859269303066512
+        },
+        {
+          "term": "foods",
+          "score": 0.06562338762161986
+        },
+        {
+          "term": "acid",
+          "score": 0.05449302735984786
+        },
+        {
+          "term": "plant",
+          "score": 0.04770805474320246
+        },
+        {
+          "term": "sauerkraut",
+          "score": 0.04690035428509052
+        },
+        {
+          "term": "vegetables",
+          "score": 0.04270262456158003
+        },
+        {
+          "term": "discrete",
+          "score": 0.04032836930838752
+        },
+        {
+          "term": "beans",
+          "score": 0.03960877261711831
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 7
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 10.1",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.14",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.13",
+          "frequency": 3
+        },
+        {
+          "section": "21 CFR 101.1",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.2",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.3",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.4",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.5",
+          "frequency": 2
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "other"
+    },
+    "ramen": {
+      "product": "ramen",
+      "keywords": [
+        {
+          "term": "food",
+          "score": 0.14886995389394952
+        },
+        {
+          "term": "noodles",
+          "score": 0.09697218057907568
+        },
+        {
+          "term": "substance",
+          "score": 0.0699616316676834
+        },
+        {
+          "term": "additive",
+          "score": 0.06901677003587361
+        },
+        {
+          "term": "use",
+          "score": 0.06643763597676185
+        },
+        {
+          "term": "policy",
+          "score": 0.05447366804737389
+        },
+        {
+          "term": "foods",
+          "score": 0.05420520770910174
+        },
+        {
+          "term": "labeling",
+          "score": 0.05341595741950265
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 182.1",
+          "frequency": 5
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "other"
+    },
+    "noodle": {
+      "product": "noodle",
+      "keywords": [
+        {
+          "term": "noodle",
+          "score": 0.12233019817281765
+        },
+        {
+          "term": "enriched",
+          "score": 0.12092738887345544
+        },
+        {
+          "term": "egg",
+          "score": 0.1148802602361143
+        },
+        {
+          "term": "noodle product",
+          "score": 0.10894421969432344
+        },
+        {
+          "term": "product",
+          "score": 0.10894421969432344
+        },
+        {
+          "term": "vegetable",
+          "score": 0.10755006115007286
+        },
+        {
+          "term": "noodles",
+          "score": 0.09641211508791114
+        },
+        {
+          "term": "noodle products",
+          "score": 0.08565263004538605
+        }
+      ],
+      "cfr_sections": [],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "grain"
+    },
+    "pasta": {
+      "product": "pasta",
+      "keywords": [
+        {
+          "term": "sauce",
+          "score": 0.11167304088827737
+        },
+        {
+          "term": "seasoning",
+          "score": 0.08197773521337519
+        },
+        {
+          "term": "mixes",
+          "score": 0.07343493246113424
+        },
+        {
+          "term": "food",
+          "score": 0.07046827942557035
+        },
+        {
+          "term": "products",
+          "score": 0.0682845018866787
+        },
+        {
+          "term": "pasta",
+          "score": 0.06802730681673
+        },
+        {
+          "term": "cup",
+          "score": 0.060757580101839646
+        },
+        {
+          "term": "salad",
+          "score": 0.059876531693365154
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 20
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 17
+        },
+        {
+          "section": "21 CFR 101.13",
+          "frequency": 13
+        },
+        {
+          "section": "21 CFR 101.14",
+          "frequency": 6
+        },
+        {
+          "section": "21 CFR 101.1",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.2",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.3",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.4",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.5",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.105",
+          "frequency": 1
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "grain"
+    },
+    "pork": {
+      "product": "pork",
+      "keywords": [
+        {
+          "term": "food",
+          "score": 0.1206685814111353
+        },
+        {
+          "term": "substance",
+          "score": 0.07037862816137827
+        },
+        {
+          "term": "used",
+          "score": 0.06691792760083767
+        },
+        {
+          "term": "additive",
+          "score": 0.06608811194440747
+        },
+        {
+          "term": "use",
+          "score": 0.06405393711861591
+        },
+        {
+          "term": "beans",
+          "score": 0.05910270675602771
+        },
+        {
+          "term": "pork",
+          "score": 0.05686181376570926
+        },
+        {
+          "term": "policy",
+          "score": 0.055705464737899356
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 182.1",
+          "frequency": 5
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "meat"
+    },
+    "banana": {
+      "product": "banana",
+      "keywords": [
+        {
+          "term": "food",
+          "score": 0.09337831890907014
+        },
+        {
+          "term": "substance",
+          "score": 0.0696165047791129
+        },
+        {
+          "term": "chapter",
+          "score": 0.060780696641122
+        },
+        {
+          "term": "flavor",
+          "score": 0.05573402715778444
+        },
+        {
+          "term": "fruit",
+          "score": 0.053972835960399576
+        },
+        {
+          "term": "use",
+          "score": 0.05367574772984871
+        },
+        {
+          "term": "additive",
+          "score": 0.052121112215108824
+        },
+        {
+          "term": "chips",
+          "score": 0.047443750635967584
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 182.1",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 4
+        },
+        {
+          "section": "21 CFR 101.44",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.1",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.2",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.3",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.4",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.5",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.105",
+          "frequency": 1
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "fruit"
+    },
+    "kimchi": {
+      "product": "kimchi",
+      "keywords": [
+        {
+          "term": "food",
+          "score": 0.14841373720743334
+        },
+        {
+          "term": "use",
+          "score": 0.07961133062994244
+        },
+        {
+          "term": "products",
+          "score": 0.07732215000609968
+        },
+        {
+          "term": "substance",
+          "score": 0.07058899636273172
+        },
+        {
+          "term": "additive",
+          "score": 0.06957063772600977
+        },
+        {
+          "term": "issued",
+          "score": 0.06547164356435592
+        },
+        {
+          "term": "foods",
+          "score": 0.062269253316117566
+        },
+        {
+          "term": "policy",
+          "score": 0.06212121371725534
+        }
+      ],
+      "cfr_sections": [
+        {
+          "section": "21 CFR 182.1",
+          "frequency": 5
+        },
+        {
+          "section": "21 CFR 81.1",
+          "frequency": 2
+        },
+        {
+          "section": "21 CFR 101.12",
+          "frequency": 1
+        },
+        {
+          "section": "21 CFR 101.9",
+          "frequency": 1
+        }
+      ],
+      "confidence": 1.0,
+      "related_docs_count": 20,
+      "category": "vegetable"
+    }
+  }
+}
