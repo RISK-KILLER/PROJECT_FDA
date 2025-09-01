@@ -75,36 +75,45 @@ const FDAChatbot = () => {
   };
 
   // API 호출 함수
-  const callChatAPI = async (message) => {
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: message,
-          project_id: currentProject?.id
-        }),
-      });
+// frontend/src/App.js
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+// API 호출 함수
+const callChatAPI = async (message) => {
+  try {
+    // ✅ 수정된 부분: 환경 변수를 사용하여 백엔드의 전체 URL을 만듭니다.
+    const apiUrl = `${process.env.REACT_APP_API_URL}/api/chat`;
 
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('API 호출 오류:', error);
-      // 오류 시 기본 응답 반환
-      return {
-        content: '죄송합니다. 서버 연결에 문제가 있습니다. 잠시 후 다시 시도해주세요.',
-        keywords: [],
-        cfr_references: [],
-        sources: []
-      };
+    // ✅ 수정된 부분: 완성된 apiUrl 변수를 사용합니다.
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: message,
+        project_id: currentProject?.id
+      }),
+    });
+
+    if (!response.ok) {
+      // 서버로부터 받은 에러 메시지를 포함하여 오류를 throw합니다.
+      const errorData = await response.json().catch(() => ({ detail: 'Unknown server error' }));
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.detail}`);
     }
-  };
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('API 호출 오류:', error);
+    // 오류 시 기본 응답 반환
+    return {
+      content: `죄송합니다. 서버 연결에 문제가 있습니다. 잠시 후 다시 시도해주세요.\n(에러: ${error.message})`,
+      keywords: [],
+      cfr_references: [],
+      sources: []
+    };
+  }
+};
 
   const sendMessage = async () => {
     const message = inputMessage.trim();

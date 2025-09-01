@@ -1,11 +1,27 @@
+# requirements.txt
+# FastAPI 관련
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
-python-dotenv==1.0.0
-qdrant-client==1.7.0
-openai==1.3.7
-pydantic==2.5.0
 python-multipart==0.0.6
+
+# LlamaIndex 0.11.x 통일
+llama-index==0.11.11
+llama-index-vector-stores-qdrant==0.3.0
+llama-index-embeddings-openai==0.2.5
+llama-index-llms-openai==0.2.16
+
+# Qdrant & OpenAI
+qdrant-client==1.12.1
+openai==1.40.0
+
+# 유틸리티
+python-dotenv==1.0.0
 httpx==0.25.2
+
+# 데이터 처리
 rank-bm25==0.2.2
 scikit-learn==1.3.2
 numpy==1.24.3
+
+# 로깅
+colorlog==6.8.0

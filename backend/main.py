@@ -1,110 +1,200 @@
+# main.py
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 import os
 from dotenv import load_dotenv
+import logging
 
-from utils.qdrant_client import QdrantService
+from utils.rag_engine import FDARAGEngine
 from utils.keyword_mapper import KeywordMapper
 
 # 환경변수 로드
 load_dotenv()
+
+# 로깅 설정
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI(title="FDA Export Assistant API")
 
 # CORS 설정
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", "http://localhost:3001"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # 서비스 초기화
-qdrant_service = QdrantService()
+rag_engine = FDARAGEngine()
 keyword_mapper = KeywordMapper()
 
 # Request/Response 모델
 class ChatRequest(BaseModel):
     message: str
     project_id: Optional[int] = None
+    include_checklist: Optional[bool] = True
 
 class CFRReference(BaseModel):
     title: str
     description: str
     url: Optional[str] = None
 
+class SourceDocument(BaseModel):
+    title: str
+    category: str
+    url: Optional[str] = None
+
 class ChatResponse(BaseModel):
     content: str
     keywords: List[str] = []
     cfr_references: List[CFRReference] = []
-    sources: List[str] = []
+    sources: List[SourceDocument] = []
 
 @app.get("/")
 async def root():
-    return {"message": "FDA Export Assistant API"}
+    return {
+        "message": "FDA Export Assistant API",
+        "version": "2.0",
+        "engine": "LlamaIndex RAG"
+    }
+
+@app.get("/health")
+async def health_check():
+    """헬스 체크 엔드포인트"""
+    try:
+        # Qdrant 연결 테스트
+        collections = rag_engine.qdrant_client.get_collections()
+        return {
+            "status": "healthy",
+            "collections_count": len(collections.collections),
+            "rag_engine": "active"
+        }
+    except Exception as e:
+        logger.error(f"Health check failed: {e}")
+        raise HTTPException(status_code=503, detail="Service unhealthy")
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
+    """
+    메인 챗봇 엔드포인트
+    FDA 규제 관련 질문에 대한 답변 생성
+    """
     try:
-        # 카테고리 매핑
+        logger.info(f"Received query: {request.message}")
+        
+        # 1. KeywordMapper로 관련 컬렉션 식별
         relevant_collections = keyword_mapper.get_relevant_collections(request.message)
         
-        # Qdrant 검색
-        search_results = await qdrant_service.search_multiple_collections(
+        # 2. 컬렉션이 없으면 기본 컬렉션 사용
+        if not relevant_collections:
+            relevant_collections = ['fda_ecfr', 'fda_general']
+        
+        logger.info(f"Selected collections: {relevant_collections}")
+        
+        # 3. RAG 엔진으로 검색 및 응답 생성
+        response_data = rag_engine.query(
             query=request.message,
             collections=relevant_collections,
-            limit=5
+            include_checklist=request.include_checklist
         )
         
-        # 응답 생성
-        response = generate_response(request.message, search_results)
-        return response
+        # 4. 응답 포맷팅
+        cfr_refs = [
+            CFRReference(
+                title=ref['title'],
+                description=ref['description'],
+                url=ref.get('url', '')
+            )
+            for ref in response_data.get('cfr_references', [])
+        ]
+        
+        source_docs = [
+            SourceDocument(
+                title=src['title'],
+                category=src.get('category', ''),
+                url=src.get('url', '')
+            )
+            for src in response_data.get('sources', [])
+        ]
+        
+        return ChatResponse(
+            content=response_data['content'],
+            keywords=response_data.get('keywords', []),
+            cfr_references=cfr_refs,
+            sources=source_docs
+        )
         
     except Exception as e:
+        logger.error(f"Error processing chat request: {e}", exc_info=True)
+        
+        # 에러 발생 시 기본 응답
+        return ChatResponse(
+            content=f"죄송합니다. 요청을 처리하는 중 오류가 발생했습니다. 다시 시도해 주세요.\n오류: {str(e)}",
+            keywords=[],
+            cfr_references=[],
+            sources=[]
+        )
+
+@app.get("/api/collections")
+async def list_collections():
+    """사용 가능한 컬렉션 목록 반환"""
+    try:
+        collections = rag_engine.qdrant_client.get_collections()
+        collection_info = []
+        
+        for collection in collections.collections:
+            try:
+                info = rag_engine.qdrant_client.get_collection(collection.name)
+                collection_info.append({
+                    "name": collection.name,
+                    "vectors_count": info.points_count,
+                    "category": collection.name.replace("fda_", "").replace("_", " ").title()
+                })
+            except:
+                continue
+        
+        # 벡터 수 기준 정렬
+        collection_info.sort(key=lambda x: x['vectors_count'], reverse=True)
+        
+        return {
+            "total_collections": len(collection_info),
+            "collections": collection_info[:10]  # 상위 10개만 반환
+        }
+        
+    except Exception as e:
+        logger.error(f"Error listing collections: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-def generate_response(query: str, search_results: List) -> ChatResponse:
-    """검색 결과를 바탕으로 응답 생성 (시뮬레이션)"""
-    
-    # 키워드 추출 (실제로는 더 정교한 로직 필요)
-    keywords = extract_keywords(query)
-    
-    # CFR 참조 생성
-    cfr_references = []
-    sources = []
-    
-    for result in search_results[:3]:  # 상위 3개만 사용
-        if result.payload.get('has_cfr'):
-            cfr_references.append(CFRReference(
-                title=result.payload.get('title', ''),
-                description=f"관련 규제 문서입니다. 카테고리: {result.payload.get('category', '')}",
-                url=result.payload.get('url', '')
-            ))
-        sources.append(result.payload.get('title', ''))
-    
-    # 기본 응답 생성
-    if '김치' in query:
-        content = "김치는 발효식품으로 분류되어 다음과 같은 FDA 규제를 확인해야 합니다. 검색된 관련 문서를 바탕으로 안내해드리겠습니다."
-    else:
-        content = f"'{query}'에 대한 FDA 규제 정보를 검색했습니다. 관련 문서 {len(search_results)}개를 찾았습니다."
-    
-    return ChatResponse(
-        content=content,
-        keywords=keywords,
-        cfr_references=cfr_references,
-        sources=sources
-    )
+@app.post("/api/test-query")
+async def test_query(query: str = "김치 수출 시 필요한 FDA 규제는?"):
+    """
+    테스트용 쿼리 엔드포인트
+    기본 질문으로 시스템 작동 확인
+    """
+    try:
+        response_data = rag_engine.query(
+            query=query,
+            include_checklist=True
+        )
+        
+        return {
+            "query": query,
+            "response": response_data['content'][:500] + "...",  # 처음 500자만
+            "sources_count": len(response_data.get('sources', [])),
+            "keywords": response_data.get('keywords', [])
+        }
+        
+    except Exception as e:
+        logger.error(f"Test query failed: {e}")
+        return {
+            "error": str(e),
+            "status": "failed"
+        }
 
-def extract_keywords(query: str) -> List[str]:
-    """쿼리에서 키워드 추출 (간단한 구현)"""
-    keywords = []
-    if '김치' in query:
-        keywords.extend(['fermented', 'acidified', 'vegetable'])
-    if '라면' in query:
-        keywords.extend(['processed_grain', 'noodle', 'sodium'])
-    if '수출' in query:
-        keywords.extend(['export', 'import', 'regulation'])
-    return keywords
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
