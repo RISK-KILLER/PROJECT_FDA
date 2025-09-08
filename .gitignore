@@ -11,3 +11,5 @@ __pycache__/
 # OS 파일
 .DS_Store
 Thumbs.db
+
+echo setup.bat >> .gitignore
