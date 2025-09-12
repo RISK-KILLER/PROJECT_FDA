@@ -1,3 +1,4 @@
+# utils/qdrant_client.py
 from qdrant_client import QdrantClient
 from qdrant_client.models import Filter, SearchRequest
 from openai import OpenAI
