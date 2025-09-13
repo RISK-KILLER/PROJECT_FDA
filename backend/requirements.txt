@@ -22,7 +22,3 @@ numpy>=1.25.0
 sentence-transformers>=2.2.2
 torch>=2.0.0
 transformers>=4.21.0
-
-# rag 지원
-chromadb>=0.4.0
-sentence-transformers>=2.2.0
