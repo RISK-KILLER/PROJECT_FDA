@@ -10,30 +10,34 @@ const FDAChatbot = () => {
     { id: 1, name: '김치 미국 수출', active: true, progress: 2 },
   ]);
 
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      type: 'user',
-      content: '김치 수출하려고 하는데 어떤 규제 확인해야 하나요?'
-    },
-    {
-      id: 2,
-      type: 'bot',
-      content: '김치는 발효식품으로 분류되어 다음과 같은 FDA 규제를 확인해야 합니다:',
-      keywords: ['fermented', 'acidified', 'vegetable', 'low-acid'],
-      cfr_references: [
-        {
-          title: '21 CFR 114 - Acidified Foods',
-          description: '산성화 식품에 대한 제조, 가공, 포장 요구사항을 규정합니다. 김치는 pH 4.6 이하의 산성화 식품으로 분류됩니다.'
-        },
-        {
-          title: '21 CFR 108.25 - Emergency Permit Control',
-          description: '산성화 식품 제조업체는 FDA에 사전 등록이 필요합니다.'
-        }
-      ]
-    }
-  ]);
+  // 프로젝트별 메시지를 저장하는 객체
+  const [projectMessages, setProjectMessages] = useState({
+    1: [  // 기본 프로젝트의 초기 메시지
+      {
+        id: 1,
+        type: 'user',
+        content: '김치 수출하려고 하는데 어떤 규제 확인해야 하나요?'
+      },
+      {
+        id: 2,
+        type: 'bot',
+        content: '김치는 발효식품으로 분류되어 다음과 같은 FDA 규제를 확인해야 합니다:',
+        keywords: ['fermented', 'acidified', 'vegetable', 'low-acid'],
+        cfr_references: [
+          {
+            title: '21 CFR 114 - Acidified Foods',
+            description: '산성화 식품에 대한 제조, 가공, 포장 요구사항을 규정합니다. 김치는 pH 4.6 이하의 산성화 식품으로 분류됩니다.'
+          },
+          {
+            title: '21 CFR 108.25 - Emergency Permit Control',
+            description: '산성화 식품 제조업체는 FDA에 사전 등록이 필요합니다.'
+          }
+        ]
+      }
+    ]
+  });
 
+  const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [dragOver, setDragOver] = useState(false);
@@ -42,6 +46,14 @@ const FDAChatbot = () => {
 
   const currentProject = projects.find(p => p.active);
   
+  // 컴포넌트 마운트 시 현재 프로젝트의 메시지 로드
+  useEffect(() => {
+    if (currentProject) {
+      const currentProjectMessages = projectMessages[currentProject.id] || [];
+      setMessages(currentProjectMessages);
+    }
+  }, [currentProject?.id]);
+
   const progressSteps = [
     { id: 'regulations', label: '기본 규제 확인', icon: CheckCircle },
     { id: 'certificates', label: '인증서 분석', icon: Clock },
@@ -58,20 +70,51 @@ const FDAChatbot = () => {
   const createNewProject = () => {
     const projectName = prompt('새 프로젝트 이름을 입력하세요:');
     if (projectName) {
+      const newProjectId = Date.now();
       const newProject = {
-        id: Date.now(),
+        id: newProjectId,
         name: projectName,
         active: true,
         progress: 0
       };
       
+      // 현재 메시지를 현재 프로젝트에 저장
+      if (currentProject) {
+        setProjectMessages(prev => ({
+          ...prev,
+          [currentProject.id]: messages
+        }));
+      }
+      
+      // 새 프로젝트 추가
       setProjects(prev => prev.map(p => ({ ...p, active: false })).concat(newProject));
+      
+      // 새 프로젝트의 빈 메시지 배열 생성
+      setProjectMessages(prev => ({
+        ...prev,
+        [newProjectId]: []
+      }));
+      
+      // 현재 화면 메시지를 빈 배열로 설정
       setMessages([]);
     }
   };
 
   const selectProject = (projectId) => {
+    // 현재 메시지를 현재 프로젝트에 저장
+    if (currentProject) {
+      setProjectMessages(prev => ({
+        ...prev,
+        [currentProject.id]: messages
+      }));
+    }
+    
+    // 프로젝트 변경
     setProjects(prev => prev.map(p => ({ ...p, active: p.id === projectId })));
+    
+    // 선택된 프로젝트의 메시지 불러오기
+    const selectedProjectMessages = projectMessages[projectId] || [];
+    setMessages(selectedProjectMessages);
   };
 
   // API 호출 함수
@@ -118,7 +161,15 @@ const FDAChatbot = () => {
       content: message
     };
 
-    setMessages(prev => [...prev, newUserMessage]);
+    const updatedMessages = [...messages, newUserMessage];
+    setMessages(updatedMessages);
+    
+    // 현재 프로젝트의 메시지도 업데이트
+    setProjectMessages(prev => ({
+      ...prev,
+      [currentProject.id]: updatedMessages
+    }));
+    
     setInputMessage('');
     setIsTyping(true);
 
@@ -134,7 +185,15 @@ const FDAChatbot = () => {
         sources: apiResponse.sources || []
       };
       
-      setMessages(prev => [...prev, botMessage]);
+      const finalMessages = [...updatedMessages, botMessage];
+      setMessages(finalMessages);
+      
+      // 프로젝트 메시지도 업데이트
+      setProjectMessages(prev => ({
+        ...prev,
+        [currentProject.id]: finalMessages
+      }));
+      
     } catch (error) {
       console.error('메시지 전송 오류:', error);
       const errorMessage = {
@@ -144,7 +203,14 @@ const FDAChatbot = () => {
         keywords: [],
         cfr_references: []
       };
-      setMessages(prev => [...prev, errorMessage]);
+      const finalMessages = [...updatedMessages, errorMessage];
+      setMessages(finalMessages);
+      
+      // 프로젝트 메시지도 업데이트
+      setProjectMessages(prev => ({
+        ...prev,
+        [currentProject.id]: finalMessages
+      }));
     } finally {
       setIsTyping(false);
     }
@@ -157,6 +223,24 @@ const FDAChatbot = () => {
     }
   };
 
+  const resetConversation = async () => {
+    if (window.confirm('현재 대화를 초기화하시겠습니까?')) {
+      try {
+        await fetch(`${process.env.REACT_APP_API_URL}/api/project/${currentProject.id}/reset`, {
+          method: 'POST',
+        });
+        setMessages([]);
+        // 프로젝트 메시지도 초기화
+        setProjectMessages(prev => ({
+          ...prev,
+          [currentProject.id]: []
+        }));
+      } catch (error) {
+        console.error('대화 초기화 API 호출 오류:', error);
+      }
+    }
+  };
+
   const handleFileUpload = (files) => {
     Array.from(files).forEach(file => {
       const uploadMessage = {
@@ -165,7 +249,14 @@ const FDAChatbot = () => {
         content: `📎 파일 업로드됨: ${file.name}`,
         isFile: true
       };
-      setMessages(prev => [...prev, uploadMessage]);
+      const updatedMessages = [...messages, uploadMessage];
+      setMessages(updatedMessages);
+      
+      // 프로젝트 메시지도 업데이트
+      setProjectMessages(prev => ({
+        ...prev,
+        [currentProject.id]: updatedMessages
+      }));
 
       setTimeout(() => {
         const analysisMessage = {
@@ -179,7 +270,14 @@ const FDAChatbot = () => {
             }
           ]
         };
-        setMessages(prev => [...prev, analysisMessage]);
+        const finalMessages = [...updatedMessages, analysisMessage];
+        setMessages(finalMessages);
+        
+        // 프로젝트 메시지도 업데이트
+        setProjectMessages(prev => ({
+          ...prev,
+          [currentProject.id]: finalMessages
+        }));
       }, 1500);
     });
   };
@@ -222,8 +320,18 @@ const FDAChatbot = () => {
     <>
       {/* 헤더 */}
       <div className="p-6 border-b border-gray-200 bg-white/80">
-        <h1 className="text-xl font-semibold text-gray-800">{currentProject?.name}</h1>
-        <p className="text-gray-500 text-sm mt-1">FDA 공식 데이터 기반 규제 안내</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-xl font-semibold text-gray-800">{currentProject?.name}</h1>
+            <p className="text-gray-500 text-sm mt-1">FDA 공식 데이터 기반 규제 안내</p>
+          </div>
+          <button
+            onClick={resetConversation}
+            className="text-gray-500 hover:text-gray-700 text-sm px-3 py-1 rounded border border-gray-300 hover:border-gray-400 transition-colors"
+          >
+            대화 초기화
+          </button>
+        </div>
       </div>
 
       {/* 채팅 영역 */}
@@ -358,25 +466,41 @@ const FDAChatbot = () => {
     </>
   );
 
-  const deleteProject = (projectId) => {
-  if (projects.length <= 1) {
-    alert('최소 하나의 프로젝트는 유지되어야 합니다.');
-    return;
-  }
-  
-  if (window.confirm('정말 이 프로젝트를 삭제하시겠습니까?')) {
-    const deletingActiveProject = projects.find(p => p.id === projectId)?.active;
+  const deleteProject = async (projectId) => {
+    if (projects.length <= 1) {
+      alert('최소 하나의 프로젝트는 유지되어야 합니다.');
+      return;
+    }
     
-    setProjects(prev => {
-      const remaining = prev.filter(p => p.id !== projectId);
-      
-      // 삭제된 프로젝트가 활성 상태였다면 첫 번째 프로젝트를 활성화
-      if (deletingActiveProject && remaining.length > 0) {
-        remaining[0].active = true;
-        setMessages([]); // 새 프로젝트로 전환 시 메시지 초기화
+    if (window.confirm('정말 이 프로젝트를 삭제하시겠습니까?')) {
+      try {
+        await fetch(`${process.env.REACT_APP_API_URL}/api/project/${projectId}`, {
+          method: 'DELETE',
+        });
+      } catch (error) {
+        console.error('프로젝트 삭제 API 호출 오류:', error);
       }
       
-      return remaining;
+      const deletingActiveProject = projects.find(p => p.id === projectId)?.active;
+      
+      // 프로젝트 메시지도 함께 삭제
+      setProjectMessages(prev => {
+        const newMessages = { ...prev };
+        delete newMessages[projectId];
+        return newMessages;
+      });
+      
+      setProjects(prev => {
+        const remaining = prev.filter(p => p.id !== projectId);
+        
+        if (deletingActiveProject && remaining.length > 0) {
+          remaining[0].active = true;
+          // 첫 번째 남은 프로젝트의 메시지 불러오기
+          const firstProjectMessages = projectMessages[remaining[0].id] || [];
+          setMessages(firstProjectMessages);
+        }
+        
+        return remaining;
       });
     }
   };
@@ -471,8 +595,8 @@ const FDAChatbot = () => {
                 </div>
               </div>
             ))}
-            </div>
           </div>
+        </div>
 
         {/* 탭 메뉴 */}
         <div className="flex-1">

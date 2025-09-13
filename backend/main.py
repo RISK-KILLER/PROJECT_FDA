@@ -1,13 +1,12 @@
-# main.py
+# main.py 수정 (기존 구조 보존)
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import Dict, Optional
 import os
 from dotenv import load_dotenv
 import logging
 
-# [수정] FDARAGEngine 대신 FDAAgent를 import
 from utils.agent import FDAAgent
 
 load_dotenv()
@@ -24,7 +23,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# [수정] 서버 시작 시 FDAAgent 인스턴스를 하나만 생성
+# [기존 유지] 기본 FDA Agent (fallback용)
 try:
     fda_agent = FDAAgent()
     logger.info("FDA ReAct Agent initialized successfully.")
@@ -32,15 +31,16 @@ except Exception as e:
     logger.error(f"Failed to initialize FDA Agent: {e}")
     fda_agent = None
 
-# Request/Response 모델 (기존과 동일하게 사용 가능)
+# [추가] 프로젝트별 에이전트 딕셔너리
+project_agents: Dict[int, FDAAgent] = {}
+
 class ChatRequest(BaseModel):
     message: str
+    project_id: Optional[int] = None
 
 class ChatResponse(BaseModel):
     content: str
-    # 에이전트 응답은 단순 텍스트이므로, 소스 등은 파싱이 필요할 수 있음
-    # 우선은 content만 전달하도록 단순화
-    
+
 @app.get("/")
 async def root():
     return {"message": "FDA Export Assistant API - ReAct Agent"}
@@ -51,10 +51,22 @@ async def chat(request: ChatRequest):
         raise HTTPException(status_code=500, detail="Agent is not available.")
     
     try:
-        logger.info(f"Received query for agent: {request.message}")
+        project_id = request.project_id
         
-        # [수정] KeywordMapper와 RAGEngine 호출 로직을 agent.chat() 하나로 대체
-        agent_response = fda_agent.chat(request.message)
+        # 프로젝트 ID가 있으면 프로젝트별 에이전트 사용, 없으면 기본 에이전트 사용
+        if project_id:
+            if project_id not in project_agents:
+                project_agents[project_id] = FDAAgent()
+                logger.info(f"새 프로젝트 에이전트 생성: {project_id}")
+            
+            agent = project_agents[project_id]
+            logger.info(f"프로젝트 {project_id}에서 질문 처리: {request.message}")
+        else:
+            # 기존 방식: 전역 에이전트 사용 (하위 호환성)
+            agent = fda_agent
+            logger.info(f"기본 에이전트로 질문 처리: {request.message}")
+        
+        agent_response = agent.chat(request.message)
         
         logger.info("Agent generated a response.")
         
@@ -63,4 +75,24 @@ async def chat(request: ChatRequest):
     except Exception as e:
         logger.error(f"Error processing agent chat request: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
- 
+
+@app.delete("/api/project/{project_id}")
+async def delete_project(project_id: int):
+    """프로젝트 삭제 시 해당 에이전트도 제거"""
+    if project_id in project_agents:
+        del project_agents[project_id]
+        logger.info(f"프로젝트 {project_id} 에이전트 삭제 완료")
+    return {"message": "프로젝트가 삭제되었습니다."}
+
+@app.post("/api/project/{project_id}/reset")
+async def reset_project_conversation(project_id: int):
+    """특정 프로젝트의 대화 히스토리 초기화"""
+    if project_id in project_agents:
+        project_agents[project_id].reset_conversation()
+        logger.info(f"프로젝트 {project_id} 대화 히스토리 초기화 완료")
+        return {"message": "대화 히스토리가 초기화되었습니다."}
+    else:
+        # 해당 프로젝트가 없으면 새로 생성
+        project_agents[project_id] = FDAAgent()
+        logger.info(f"프로젝트 {project_id} 새 에이전트 생성")
+        return {"message": "새로운 대화가 시작되었습니다."}
