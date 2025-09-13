@@ -231,7 +231,7 @@ class ProjectRAGChroma:
                 # .md 파일 목록 출력
                 md_files = list(docs_path.glob("*.md"))
                 print(f"다운로드된 문서: {len(md_files)}개")
-                for md_file in md_files:
+                for md_file in md_`f`iles:
                     print(f"  - {md_file.name}")
             else:
                 print("저장소에 docs 폴더가 없습니다")
