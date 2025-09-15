@@ -1,0 +1,27 @@
+# Documentation
+README.md
+docs/
+tools/
+*.md
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# Prettier
+.prettierignore
+.prettierrc
+.prettierrc.json
+.pro-commit-config.yaml
+
+# Logs
+*.log
+logs/
+
+# Cache
+node_modules/.cache/
+.npm/
