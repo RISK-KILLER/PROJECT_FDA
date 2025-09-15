@@ -1,4 +1,4 @@
-# main.py 수정 (기존 구조 보존)
+# main.py
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -72,9 +72,17 @@ async def chat(request: ChatRequest):
         
         return ChatResponse(content=agent_response)
         
+    except ValueError as e:
+        # ValueError는 이미 agent.py에서 처리됨
+        logger.warning(f"Handled error in agent: {e}")
+        return ChatResponse(content=str(e))
+        
     except Exception as e:
         logger.error(f"Error processing agent chat request: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=str(e))
+        
+        # 사용자 친화적 에러 메시지
+        error_message = "죄송합니다. 요청 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
+        return ChatResponse(content=error_message)
 
 @app.delete("/api/project/{project_id}")
 async def delete_project(project_id: int):

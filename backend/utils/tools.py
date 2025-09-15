@@ -25,7 +25,7 @@ def create_fda_tools() -> List[QueryEngineTool]:
     # BAAI/bge-reranker-v2-m3 모델은 쿼리-문서 쌍의 관련성을 직접 점수화합니다.
     reranker = SentenceTransformerRerank(
         model="BAAI/bge-reranker-v2-m3",
-        top_n=3,
+        top_n=4,
     )
 
     # Qdrant에 존재하는 모든 컬렉션 이름을 가져옵니다.
@@ -57,7 +57,7 @@ def create_fda_tools() -> List[QueryEngineTool]:
             index = VectorStoreIndex.from_vector_store(vector_store)
             # 1단계: 벡터 검색으로 상위 후보를 넓게 가져오고, 2단계: 리랭커로 상위 n개를 정밀 선택
             query_engine = index.as_query_engine(
-                similarity_top_k=5,
+                similarity_top_k=7,
                 node_postprocessors=[reranker],
             )
 
