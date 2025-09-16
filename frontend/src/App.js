@@ -1,10 +1,12 @@
 // frontend/src/App.js
 import React, { useState, useRef, useEffect } from 'react';
-import { Upload, Send, Plus, CheckCircle, Clock, Circle, Download, FileText, MessageCircle , X } from 'lucide-react';
+import Sidebar from './components/Sidebar.jsx';
+import MessageList from './components/MessageList.jsx';
+import InputBar from './components/InputBar.jsx';
 import './App.css';
 
 const FDAChatbot = () => {
-  const [activeTab, setActiveTab] = useState('regulations');
+  
   
   const [projects, setProjects] = useState([
     { id: 1, name: '김치 미국 수출', active: true, progress: 2 },
@@ -16,22 +18,38 @@ const FDAChatbot = () => {
       {
         id: 1,
         type: 'user',
-        content: '김치 수출하려고 하는데 어떤 규제 확인해야 하나요?'
+        content: '아래 내용은 해당 챗봇 이용을 위한 가이드라인입니다.\n새로운 프로젝트를 생성해서 궁금한 내용들을 질문해보세요.'
       },
       {
         id: 2,
         type: 'bot',
-        content: '김치는 발효식품으로 분류되어 다음과 같은 FDA 규제를 확인해야 합니다:',
-        keywords: ['fermented', 'acidified', 'vegetable', 'low-acid'],
+        content: '식품 수출을 위한 가이드라인이 필요할 때, 아래와 같은 내용으로 질문해보세요. 원문 링크는 답변과 함께 제공됩니다.',
+        keywords: ['quick prompts', 'HACCP', 'FSVP', 'labeling'],
         cfr_references: [
           {
-            title: '21 CFR 114 - Acidified Foods',
-            description: '산성화 식품에 대한 제조, 가공, 포장 요구사항을 규정합니다. 김치는 pH 4.6 이하의 산성화 식품으로 분류됩니다.'
+            title: '21 CFR 117 - CGMP, Hazard Analysis, and Risk-Based Preventive Controls',
+            description: 'HACCP 유사 체계로 위해요소 분석과 예방관리 요구사항을 규정합니다.',
+            url: 'https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-117'
           },
           {
-            title: '21 CFR 108.25 - Emergency Permit Control',
-            description: '산성화 식품 제조업체는 FDA에 사전 등록이 필요합니다.'
+            title: '21 CFR 1 Subpart L - Foreign Supplier Verification Programs (FSVP)',
+            description: '미국 수입자의 공급자 검증 의무를 규정합니다.',
+            url: 'https://www.ecfr.gov/current/title-21/chapter-I/subchapter-A/part-1/subpart-L'
+          },
+          {
+            title: '21 CFR 101 - Food Labeling',
+            description: '영양성분표, 알레르겐, 성분표시 등 라벨링 요구사항을 규정합니다.',
+            url: 'https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-101'
           }
+        ],
+        scenarios: [
+          { title: '김치 수출 초기 점검', summary: '규정 범위·핵심 요구사항 빠른 파악', prompt: '김치 미국 수출 초기 점검용으로, 적용 가능한 FDA 규정 범위와 핵심 요구사항을 한 페이지 요약으로 정리해줘.' },
+          { title: 'FSVP 준비', summary: '수입자 검증 문서 리스트업', prompt: 'FSVP 준비를 위해 우리 케이스에 필요한 문서·검증 항목을 체크리스트로 만들어줘.' },
+          { title: '라벨 검토', summary: '라벨링 적용 항목 추출', prompt: '라벨링(21 CFR 101)에서 우리 제품에 적용되는 항목만 추려서 점검표로 만들어줘.' }
+        ],
+        samples: [
+          { user: '배추·고춧가루·마늘·젓갈 기준으로 알레르겐과 표준명 정규화 도와줘.', bot: '알레르겐(예: 어패류 유래 젓갈) 표시 필요 여부를 확인하고, 성분 표준명을 정리해 드릴게요.' },
+          { user: '발효 단계에서 CCP가 될 수 있는 포인트를 알려줘.', bot: '온도·시간·pH를 중심으로 모니터링 항목과 한계기준을 제안합니다.' }
         ]
       }
     ]
@@ -54,12 +72,7 @@ const FDAChatbot = () => {
     }
   }, [currentProject?.id]);
 
-  const progressSteps = [
-    { id: 'regulations', label: '기본 규제 확인', icon: CheckCircle },
-    { id: 'certificates', label: '인증서 분석', icon: Clock },
-    { id: 'documents', label: '서류 준비', icon: Circle },
-    { id: 'checklist', label: '최종 체크리스트', icon: Circle }
-  ];
+  
 
   useEffect(() => {
     if (chatAreaRef.current) {
@@ -129,7 +142,8 @@ const FDAChatbot = () => {
         },
         body: JSON.stringify({
           message: message,
-          project_id: currentProject?.id
+          project_id: currentProject?.id,
+          language: 'ko'
         }),
       });
 
@@ -297,15 +311,7 @@ const FDAChatbot = () => {
     setDragOver(false);
   };
 
-  const ProgressIcon = ({ step, index }) => {
-    if (index < currentProject?.progress) {
-      return <CheckCircle className="w-5 h-5 text-green-500" />;
-    } else if (index === currentProject?.progress) {
-      return <Clock className="w-5 h-5 text-amber-500" />;
-    } else {
-      return <Circle className="w-5 h-5 text-gray-400" />;
-    }
-  };
+  
 
   const generateChecklist = () => {
     alert('체크리스트 생성 기능은 개발 중입니다.');
@@ -323,7 +329,7 @@ const FDAChatbot = () => {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-xl font-semibold text-gray-800">{currentProject?.name}</h1>
-            <p className="text-gray-500 text-sm mt-1">FDA 공식 데이터 기반 규제 안내</p>
+            <p className="text-gray-500 text-sm mt-1">FDA 공식 문서를 바탕으로 수출 규제를 빠르게 확인하세요</p>
           </div>
           <button
             onClick={resetConversation}
@@ -335,134 +341,31 @@ const FDAChatbot = () => {
       </div>
 
       {/* 채팅 영역 */}
-      <div ref={chatAreaRef} className="flex-1 p-6 overflow-y-auto space-y-6">
-        {messages.map(message => (
-          <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[70%] rounded-2xl px-6 py-4 ${
-              message.type === 'user'
-                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-br-md'
-                : 'bg-gray-50 border border-gray-200 rounded-bl-md'
-            }`}>
-              <div className="whitespace-pre-wrap">{message.content}</div>
-              
-              {message.keywords && message.keywords.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-3">
-                  {message.keywords.map((keyword, index) => (
-                    <span
-                      key={index}
-                      className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full border border-green-200"
-                    >
-                      {keyword}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {message.cfr_references && message.cfr_references.length > 0 && (
-                <div className="mt-4 space-y-3">
-                  {message.cfr_references.map((ref, index) => (
-                    <div key={index} className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
-                      <h4 className="font-semibold text-indigo-900 mb-2">{ref.title}</h4>
-                      <p className="text-sm text-indigo-700">{ref.description}</p>
-                      {ref.url && (
-                        <a href={ref.url} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-600 hover:underline mt-2 block">
-                          원본 문서 보기
-                        </a>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {message.sources && message.sources.length > 0 && (
-                <div className="mt-3 text-xs text-gray-500">
-                  출처: {message.sources.slice(0, 2).join(', ')}
-                  {message.sources.length > 2 && ` 외 ${message.sources.length - 2}건`}
-                </div>
-              )}
-
-              {message.type === 'bot' && (
-                <div className="flex gap-2 mt-4">
-                  <button 
-                    onClick={generateChecklist}
-                    className="flex items-center gap-1 bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-200 transition-colors"
-                  >
-                    <FileText className="w-4 h-4" />
-                    체크리스트 생성
-                  </button>
-                  <button 
-                    onClick={downloadReport}
-                    className="flex items-center gap-1 bg-indigo-100 text-indigo-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-200 transition-colors"
-                  >
-                    <Download className="w-4 h-4" />
-                    보고서 다운로드
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-
-        {isTyping && (
-          <div className="flex justify-start">
-            <div className="bg-gray-50 border border-gray-200 rounded-2xl rounded-bl-md px-6 py-4 max-w-[70%]">
-              <div className="flex items-center gap-1">
-                <MessageCircle className="w-4 h-4 text-gray-500" />
-                <span className="text-gray-500 italic">AI가 응답을 생성중입니다...</span>
-              </div>
-            </div>
-          </div>
-        )}
+      <div ref={chatAreaRef} className="flex-1 p-0 overflow-y-auto">
+        <MessageList
+          messages={messages}
+          isTyping={isTyping}
+          onGenerateChecklist={generateChecklist}
+          onDownloadReport={downloadReport}
+          setInputMessage={setInputMessage}
+          sendMessage={sendMessage}
+        />
       </div>
 
       {/* 입력 영역 */}
-      <div className="p-6 border-t border-gray-200 bg-white/80">
-        {/* 파일 업로드 영역 */}
-        <div
-          className={`border-2 border-dashed rounded-lg p-6 text-center mb-4 transition-colors cursor-pointer ${
-            dragOver 
-              ? 'border-indigo-500 bg-indigo-50' 
-              : 'border-gray-300 hover:border-indigo-400 hover:bg-indigo-50'
-          }`}
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-          <p className="text-gray-500">인증서, 분석서, 제품 문서를 업로드하세요</p>
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept="image/*,.pdf"
-            className="hidden"
-            onChange={(e) => handleFileUpload(e.target.files)}
-          />
-        </div>
-
-        {/* 메시지 입력 */}
-        <div className="flex gap-4 items-end">
-          <div className="flex-1">
-            <textarea
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="추가 질문이나 업로드한 문서에 대해 문의하세요..."
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 resize-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-              rows={2}
-            />
-          </div>
-          <button
-            onClick={sendMessage}
-            disabled={!inputMessage.trim() || isTyping}
-            className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2"
-          >
-            <Send className="w-4 h-4" />
-            전송
-          </button>
-        </div>
-      </div>
+      <InputBar
+        inputMessage={inputMessage}
+        setInputMessage={setInputMessage}
+        isTyping={isTyping}
+        onSend={sendMessage}
+        onKeyPress={handleKeyPress}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        dragOver={dragOver}
+        fileInputRef={fileInputRef}
+        onFileChange={(e) => handleFileUpload(e.target.files)}
+      />
     </>
   );
 
@@ -505,124 +408,21 @@ const FDAChatbot = () => {
     }
   };
 
-  // 탭별 컨텐츠 렌더링
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'regulations':
-        return renderChatContent();
-      case 'certificates':
-        return (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-700 mb-2">인증서 분석</h3>
-              <p className="text-gray-500">업로드된 인증서를 분석하는 기능이 곧 추가됩니다.</p>
-            </div>
-          </div>
-        );
-      case 'documents':
-        return (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <Upload className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-700 mb-2">서류 준비</h3>
-              <p className="text-gray-500">필요한 서류를 준비하고 관리하는 기능이 곧 추가됩니다.</p>
-            </div>
-          </div>
-        );
-      case 'checklist':
-        return (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <CheckCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-700 mb-2">최종 체크리스트</h3>
-              <p className="text-gray-500">수출 전 최종 점검 체크리스트가 곧 추가됩니다.</p>
-            </div>
-          </div>
-        );
-      default:
-        return renderChatContent();
-    }
-  };
+  
 
   return (
     <div className="flex h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-indigo-100">
       {/* 사이드바 */}
-      <div className="w-80 bg-white/95 backdrop-blur-sm border-r border-gray-200 p-6 flex flex-col">
-        <div className="flex items-center mb-8">
-          <div className="text-2xl mr-3">🏛️</div>
-          <h1 className="text-xl font-bold text-gray-800">FDA Export Assistant</h1>
-        </div>
-
-        {/* 프로젝트 섹션 */}
-        <div className="mb-8">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">프로젝트</h2>
-          <button
-            onClick={createNewProject}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 px-4 rounded-lg font-medium mb-4 hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            새 수출 프로젝트
-          </button>
-          
-          <div className="space-y-2">
-            {projects.map(project => (
-              <div
-                key={project.id}
-                className={`p-3 rounded-lg transition-all duration-200 ${
-                  project.active 
-                    ? 'bg-indigo-50 border-l-4 border-indigo-600 text-indigo-900' 
-                    : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span 
-                    onClick={() => selectProject(project.id)}
-                    className="flex-1 cursor-pointer"
-                  >
-                    {project.name}
-                  </span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteProject(project.id);
-                    }}
-                    className="ml-2 p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
-                    title="프로젝트 삭제"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 탭 메뉴 */}
-        <div className="flex-1">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">작업 단계</h2>
-          <div className="space-y-2">
-            {progressSteps.map((step, index) => (
-              <div
-                key={index}
-                onClick={() => setActiveTab(step.id)}
-                className={`flex items-center p-3 rounded-lg cursor-pointer transition-all duration-200 ${
-                  activeTab === step.id 
-                    ? 'bg-indigo-100 text-indigo-700 border-l-4 border-indigo-600' 
-                    : 'hover:bg-gray-100 text-gray-600'
-                }`}
-              >
-                <ProgressIcon step={step} index={index} />
-                <span className="ml-3 text-sm font-medium">{step.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      <Sidebar
+        projects={projects}
+        onCreateProject={createNewProject}
+        onSelectProject={selectProject}
+        onDeleteProject={deleteProject}
+      />
 
       {/* 메인 컨텐츠 */}
       <div className="flex-1 flex flex-col bg-white/95 backdrop-blur-sm">
-        {renderTabContent()}
+        {renderChatContent()}
       </div>
     </div>
   );
