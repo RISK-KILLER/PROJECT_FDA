@@ -40,5 +40,10 @@ tools/rag/*
 !tools/rag/start_work.bat
 !tools/rag/README.md
 
+# Database files
+chroma_db/
+*.sqlite3
+*.db
+
 # Cursor AI 설정 (각자 생성)
 .cursorrules
