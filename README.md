@@ -45,7 +45,7 @@ npm start  # http://localhost:3000
 ```bash
 cd backend  
 pip install -r requirements.txt
-uvicorn main:app --reload  # http://localhost:8000
+uvicorn main:app --host 0.0.0.0 --port 8002 
 ```
 
 3. **Developer Documentation RAG** (Optional)
