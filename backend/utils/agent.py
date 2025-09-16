@@ -173,7 +173,32 @@ Search strategy:
 """
         return augmented
 
-    def chat(self, query: str) -> str:
+    def _extract_citations_from_response(self, response) -> dict:
+        """Extract citations (title/url) from LlamaIndex response source nodes."""
+        citations = []
+        sources = []
+        keywords = []
+        try:
+            if hasattr(response, 'source_nodes') and response.source_nodes:
+                for node in response.source_nodes:
+                    meta = getattr(node, 'metadata', {}) or {}
+                    title = meta.get('title') or meta.get('document_title') or meta.get('collection') or 'Reference'
+                    url = meta.get('url') or meta.get('source') or meta.get('link')
+                    description = meta.get('summary') or meta.get('description') or '관련 규정/자료'
+                    if url:
+                        item = {"title": title, "description": description, "url": url}
+                        if item not in citations:
+                            citations.append(item)
+                            sources.append(title)
+                    # derive simple keywords from tool/collection
+                    tool_name = meta.get('tool_name') or meta.get('collection')
+                    if tool_name:
+                        keywords.append(tool_name)
+        except Exception:
+            pass
+        return {"cfr_references": citations, "sources": sources, "keywords": list(dict.fromkeys(keywords))}
+
+    def chat(self, query: str) -> dict:
         """LLM 분해를 포함한 향상된 채팅 메서드"""
         try:
             # [수정] LLM 필터를 사용하여 질문 의도 파악
@@ -195,13 +220,19 @@ Search strategy:
             # ReAct 에이전트 실행
             response = self.agent.chat(full_query)
             response_text = str(response)
+            citations = self._extract_citations_from_response(response)
             
             # 메모리 저장
             used_tools = self._extract_used_tools(response)
             self.memory.add_message("user", query)
             self.memory.add_message("assistant", response_text, used_tools)
             
-            return response_text
+            return {
+                "content": response_text,
+                "cfr_references": citations.get("cfr_references", []),
+                "sources": citations.get("sources", []),
+                "keywords": citations.get("keywords", []),
+            }
             
         except ValueError as e:
             if "max iterations" in str(e).lower():
@@ -209,7 +240,7 @@ Search strategy:
                 fallback_response = self._generate_fallback_response(query)
                 self.memory.add_message("user", query)
                 self.memory.add_message("assistant", fallback_response, ["fallback"])
-                return fallback_response
+                return {"content": fallback_response, "cfr_references": [], "sources": [], "keywords": []}
             raise e
 
     def _generate_fallback_response(self, query: str) -> str:

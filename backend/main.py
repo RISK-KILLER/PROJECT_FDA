@@ -2,7 +2,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 import os
 from dotenv import load_dotenv
 import logging
@@ -37,13 +37,40 @@ project_agents: Dict[int, FDAAgent] = {}
 class ChatRequest(BaseModel):
     message: str
     project_id: Optional[int] = None
+    language: Optional[str] = None
 
 class ChatResponse(BaseModel):
     content: str
+    keywords: List[str] = []
+    cfr_references: List[Dict] = []
+    sources: List[str] = []
 
 @app.get("/")
 async def root():
     return {"message": "FDA Export Assistant API - ReAct Agent"}
+
+def _extract_citations(text: str) -> Dict[str, List]:
+    """Very lightweight citation extractor to surface common CFR links."""
+    links = []
+    sources = []
+    keywords = []
+
+    mapping = [
+        ("21 CFR 117", "21 CFR 117 - CGMP, Hazard Analysis, and Risk-Based Preventive Controls", "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-117", ["HACCP", "preventive controls", "CGMP"]),
+        ("FSVP", "21 CFR 1 Subpart L - Foreign Supplier Verification Programs (FSVP)", "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-A/part-1/subpart-L", ["FSVP", "importer verification"]),
+        ("21 CFR 101", "21 CFR 101 - Food Labeling", "https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-101", ["labeling", "nutrition facts"]),
+        ("GRAS", "GRAS Notice Inventory", "https://www.fda.gov/food/generally-recognized-safe-gras/gras-notice-inventory", ["GRAS"]),
+    ]
+
+    lower = text.lower()
+    for key, title, url, kws in mapping:
+        if key.lower() in lower:
+            links.append({"title": title, "description": "관련 규정/자료", "url": url})
+            sources.append(title)
+            keywords.extend(kws)
+
+    return {"cfr_references": links, "sources": sources, "keywords": list(dict.fromkeys(keywords))}
+
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
@@ -67,10 +94,27 @@ async def chat(request: ChatRequest):
             logger.info(f"기본 에이전트로 질문 처리: {request.message}")
         
         agent_response = agent.chat(request.message)
-        
         logger.info("Agent generated a response.")
         
-        return ChatResponse(content=agent_response)
+        # agent_response is a dict with content and optional citations
+        content = agent_response.get("content") if isinstance(agent_response, dict) else str(agent_response)
+        keywords = agent_response.get("keywords", []) if isinstance(agent_response, dict) else []
+        cfr_references = agent_response.get("cfr_references", []) if isinstance(agent_response, dict) else []
+        sources = agent_response.get("sources", []) if isinstance(agent_response, dict) else []
+        
+        # Fallback simple extractor if missing
+        if not cfr_references:
+            extracted = _extract_citations(content)
+            keywords = keywords or extracted.get("keywords", [])
+            cfr_references = extracted.get("cfr_references", [])
+            sources = sources or extracted.get("sources", [])
+        
+        return ChatResponse(
+            content=content,
+            keywords=keywords,
+            cfr_references=cfr_references,
+            sources=sources,
+        )
         
     except ValueError as e:
         # ValueError는 이미 agent.py에서 처리됨
