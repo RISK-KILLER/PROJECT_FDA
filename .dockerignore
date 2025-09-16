@@ -18,6 +18,9 @@ tools/
 .prettierrc.json
 .pro-commit-config.yaml
 
+# Husky
+.husky
+
 # Logs
 *.log
 logs/
