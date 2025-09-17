@@ -57,7 +57,10 @@ const FDAChatbot = () => {
 
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const timerRef = useRef(null);
+  const startTimeRef = useRef(null);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef(null);
   const chatAreaRef = useRef(null);
@@ -79,6 +82,22 @@ const FDAChatbot = () => {
       chatAreaRef.current.scrollTop = chatAreaRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // 타이머 함수들
+  const startTimer = () => {
+    startTimeRef.current = Date.now();
+    setElapsedTime(0);
+    timerRef.current = setInterval(() => {
+      setElapsedTime(Date.now() - startTimeRef.current);
+    }, 100);
+  };
+
+  const stopTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
 
   const createNewProject = () => {
     const projectName = prompt('새 프로젝트 이름을 입력하세요:');
@@ -185,10 +204,14 @@ const FDAChatbot = () => {
     }));
     
     setInputMessage('');
-    setIsTyping(true);
+    setIsGenerating(true);
+    // 타이머 시작
+    startTimer();
 
     try {
       const apiResponse = await callChatAPI(message);
+      // 타이머 정지
+      stopTimer();
       
       const botMessage = {
         id: Date.now() + 1,
@@ -196,7 +219,10 @@ const FDAChatbot = () => {
         content: apiResponse.content,
         keywords: apiResponse.keywords || [],
         cfr_references: apiResponse.cfr_references || [],
-        sources: apiResponse.sources || []
+        sources: apiResponse.sources || [],
+        responseTime: apiResponse.responseTime || elapsedTime,
+        agentResponseTime: apiResponse.agentResponseTime,
+        timestamp: apiResponse.timestamp
       };
       
       const finalMessages = [...updatedMessages, botMessage];
@@ -209,13 +235,15 @@ const FDAChatbot = () => {
       }));
       
     } catch (error) {
+      stopTimer();
       console.error('메시지 전송 오류:', error);
       const errorMessage = {
         id: Date.now() + 1,
         type: 'bot',
         content: '죄송합니다. 응답을 생성하는데 문제가 발생했습니다.',
         keywords: [],
-        cfr_references: []
+        cfr_references: [],
+        responseTime: elapsedTime
       };
       const finalMessages = [...updatedMessages, errorMessage];
       setMessages(finalMessages);
@@ -226,9 +254,18 @@ const FDAChatbot = () => {
         [currentProject.id]: finalMessages
       }));
     } finally {
-      setIsTyping(false);
+      setIsGenerating(false);
     }
   };
+
+  // 컴포넌트 언마운트 시 타이머 정리
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -344,7 +381,8 @@ const FDAChatbot = () => {
       <div ref={chatAreaRef} className="flex-1 p-0 overflow-y-auto">
         <MessageList
           messages={messages}
-          isTyping={isTyping}
+          isTyping={isGenerating}
+          elapsedTime={elapsedTime}
           onGenerateChecklist={generateChecklist}
           onDownloadReport={downloadReport}
           setInputMessage={setInputMessage}
@@ -356,7 +394,7 @@ const FDAChatbot = () => {
       <InputBar
         inputMessage={inputMessage}
         setInputMessage={setInputMessage}
-        isTyping={isTyping}
+        isTyping={isGenerating}
         onSend={sendMessage}
         onKeyPress={handleKeyPress}
         onDrop={handleDrop}
