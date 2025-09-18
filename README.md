@@ -1,6 +1,7 @@
 # PROJECT_FDA
 
-FDA 식품 수출 규제 안내 시스템 챗봇
+FDA 식품 수출 규제 안내 시스템
+
 
 ## Overview
 
