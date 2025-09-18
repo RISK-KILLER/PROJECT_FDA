@@ -8,6 +8,8 @@ from dotenv import load_dotenv
 import logging
 
 from utils.agent import FDAAgent
+import time
+from datetime import datetime
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
@@ -44,6 +46,10 @@ class ChatResponse(BaseModel):
     keywords: List[str] = []
     cfr_references: List[Dict] = []
     sources: List[str] = []
+    # 시간 정보
+    responseTime: float = 0
+    agentResponseTime: float = 0
+    timestamp: str = ""
 
 @app.get("/")
 async def root():
@@ -74,6 +80,9 @@ def _extract_citations(text: str) -> Dict[str, List]:
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
+    # 요청 시작 시간
+    request_start_time = time.time()
+
     if not fda_agent:
         raise HTTPException(status_code=500, detail="Agent is not available.")
     
@@ -93,7 +102,11 @@ async def chat(request: ChatRequest):
             agent = fda_agent
             logger.info(f"기본 에이전트로 질문 처리: {request.message}")
         
+        # 에이전트 실행 시간 측정
+        agent_start_time = time.time()
         agent_response = agent.chat(request.message)
+        agent_end_time = time.time()
+        
         logger.info("Agent generated a response.")
         
         # agent_response is a dict with content and optional citations
@@ -109,24 +122,40 @@ async def chat(request: ChatRequest):
             cfr_references = extracted.get("cfr_references", [])
             sources = sources or extracted.get("sources", [])
         
+        total_response_time = (time.time() - request_start_time) * 1000
+        agent_response_time = (agent_end_time - agent_start_time) * 1000
+        
         return ChatResponse(
             content=content,
             keywords=keywords,
             cfr_references=cfr_references,
             sources=sources,
+            responseTime=total_response_time,
+            agentResponseTime=agent_response_time,
+            timestamp=datetime.now().isoformat(),
         )
         
     except ValueError as e:
-        # ValueError는 이미 agent.py에서 처리됨
+        # 에러 발생 시에도 시간 기록
+        error_response_time = (time.time() - request_start_time) * 1000
         logger.warning(f"Handled error in agent: {e}")
-        return ChatResponse(content=str(e))
+        return ChatResponse(
+            content=str(e),
+            responseTime=error_response_time,
+            timestamp=datetime.now().isoformat(),
+        )
         
     except Exception as e:
+        error_response_time = (time.time() - request_start_time) * 1000
         logger.error(f"Error processing agent chat request: {e}", exc_info=True)
         
         # 사용자 친화적 에러 메시지
         error_message = "죄송합니다. 요청 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요."
-        return ChatResponse(content=error_message)
+        return ChatResponse(
+            content=error_message,
+            responseTime=error_response_time,
+            timestamp=datetime.now().isoformat(),
+        )
 
 @app.delete("/api/project/{project_id}")
 async def delete_project(project_id: int):
