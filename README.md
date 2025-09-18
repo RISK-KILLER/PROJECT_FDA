@@ -1,6 +1,6 @@
 # PROJECT_FDA
 
-React + FastAPI 기반의 FDA 식품 수출 규제 안내 시스템
+FDA 식품 수출 규제 안내 시스템 챗봇
 
 ## Overview
 
