@@ -3,77 +3,38 @@ import React, { useState, useRef, useEffect } from 'react';
 import Sidebar from './components/Sidebar.jsx';
 import MessageList from './components/MessageList.jsx';
 import InputBar from './components/InputBar.jsx';
+import HelpModal from './components/HelpModal.jsx';
+import { Lightbulb } from 'lucide-react';
 import './App.css';
 
 const FDAChatbot = () => {
   
   
-  const [projects, setProjects] = useState([
-    { id: 1, name: '김치 미국 수출', active: true, progress: 2 },
-  ]);
+  const [projects, setProjects] = useState([]);
 
-  // 프로젝트별 메시지를 저장하는 객체
-  const [projectMessages, setProjectMessages] = useState({
-    1: [  // 기본 프로젝트의 초기 메시지
-      {
-        id: 1,
-        type: 'user',
-        content: '아래 내용은 해당 챗봇 이용을 위한 가이드라인입니다.\n새로운 프로젝트를 생성해서 궁금한 내용들을 질문해보세요.'
-      },
-      {
-        id: 2,
-        type: 'bot',
-        content: '식품 수출을 위한 가이드라인이 필요할 때, 아래와 같은 내용으로 질문해보세요. 원문 링크는 답변과 함께 제공됩니다.',
-        keywords: ['quick prompts', 'HACCP', 'FSVP', 'labeling'],
-        cfr_references: [
-          {
-            title: '21 CFR 117 - CGMP, Hazard Analysis, and Risk-Based Preventive Controls',
-            description: 'HACCP 유사 체계로 위해요소 분석과 예방관리 요구사항을 규정합니다.',
-            url: 'https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-117'
-          },
-          {
-            title: '21 CFR 1 Subpart L - Foreign Supplier Verification Programs (FSVP)',
-            description: '미국 수입자의 공급자 검증 의무를 규정합니다.',
-            url: 'https://www.ecfr.gov/current/title-21/chapter-I/subchapter-A/part-1/subpart-L'
-          },
-          {
-            title: '21 CFR 101 - Food Labeling',
-            description: '영양성분표, 알레르겐, 성분표시 등 라벨링 요구사항을 규정합니다.',
-            url: 'https://www.ecfr.gov/current/title-21/chapter-I/subchapter-B/part-101'
-          }
-        ],
-        scenarios: [
-          { title: '김치 수출 초기 점검', summary: '규정 범위·핵심 요구사항 빠른 파악', prompt: '김치 미국 수출 초기 점검용으로, 적용 가능한 FDA 규정 범위와 핵심 요구사항을 한 페이지 요약으로 정리해줘.' },
-          { title: 'FSVP 준비', summary: '수입자 검증 문서 리스트업', prompt: 'FSVP 준비를 위해 우리 케이스에 필요한 문서·검증 항목을 체크리스트로 만들어줘.' },
-          { title: '라벨 검토', summary: '라벨링 적용 항목 추출', prompt: '라벨링(21 CFR 101)에서 우리 제품에 적용되는 항목만 추려서 점검표로 만들어줘.' }
-        ],
-        samples: [
-          { user: '배추·고춧가루·마늘·젓갈 기준으로 알레르겐과 표준명 정규화 도와줘.', bot: '알레르겐(예: 어패류 유래 젓갈) 표시 필요 여부를 확인하고, 성분 표준명을 정리해 드릴게요.' },
-          { user: '발효 단계에서 CCP가 될 수 있는 포인트를 알려줘.', bot: '온도·시간·pH를 중심으로 모니터링 항목과 한계기준을 제안합니다.' }
-        ]
-      }
-    ]
-  });
+  // 프로젝트별 메시지를 저장하는 객체 (초기 메시지 제거)
+  const [projectMessages, setProjectMessages] = useState({});
 
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [showHelpModal, setShowHelpModal] = useState(false);
   const timerRef = useRef(null);
   const startTimeRef = useRef(null);
-  const [dragOver, setDragOver] = useState(false);
-  const fileInputRef = useRef(null);
   const chatAreaRef = useRef(null);
 
   const currentProject = projects.find(p => p.active);
   
-  // 컴포넌트 마운트 시 현재 프로젝트의 메시지 로드
+  // 프로젝트가 변경될 때마다 메시지 로드
   useEffect(() => {
     if (currentProject) {
       const currentProjectMessages = projectMessages[currentProject.id] || [];
       setMessages(currentProjectMessages);
+    } else {
+      setMessages([]);
     }
-  }, [currentProject?.id]);
+  }, [currentProject?.id, projects]);
 
   
 
@@ -110,7 +71,7 @@ const FDAChatbot = () => {
         progress: 0
       };
       
-      // 현재 메시지를 현재 프로젝트에 저장
+      // 현재 메시지를 현재 프로젝트에 저장 (현재 프로젝트가 있는 경우에만)
       if (currentProject) {
         setProjectMessages(prev => ({
           ...prev,
@@ -118,8 +79,11 @@ const FDAChatbot = () => {
         }));
       }
       
-      // 새 프로젝트 추가
-      setProjects(prev => prev.map(p => ({ ...p, active: false })).concat(newProject));
+      // 새 프로젝트 추가 (기존 프로젝트가 있으면 비활성화)
+      setProjects(prev => {
+        const updatedProjects = prev.map(p => ({ ...p, active: false }));
+        return [...updatedProjects, newProject];
+      });
       
       // 새 프로젝트의 빈 메시지 배열 생성
       setProjectMessages(prev => ({
@@ -150,7 +114,7 @@ const FDAChatbot = () => {
   };
 
   // API 호출 함수
-  const callChatAPI = async (message) => {
+  const callChatAPI = async (message, projectId) => {
     try {
       const apiUrl = `${process.env.REACT_APP_API_URL}/api/chat`;
 
@@ -161,7 +125,7 @@ const FDAChatbot = () => {
         },
         body: JSON.stringify({
           message: message,
-          project_id: currentProject?.id,
+          project_id: projectId,
           language: 'ko'
         }),
       });
@@ -188,6 +152,32 @@ const FDAChatbot = () => {
     const message = inputMessage.trim();
     if (!message) return;
 
+    // 프로젝트가 없으면 자동으로 생성
+    let activeProject = currentProject;
+    if (!activeProject) {
+      const now = new Date();
+      const timeString = now.toLocaleTimeString('ko-KR', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false 
+      });
+      const projectName = `FDA 수출 문의 ${timeString}`;
+      const newProjectId = Date.now();
+      const newProject = {
+        id: newProjectId,
+        name: projectName,
+        active: true,
+        progress: 0
+      };
+      
+      setProjects([newProject]);
+      setProjectMessages(prev => ({
+        ...prev,
+        [newProjectId]: []
+      }));
+      activeProject = newProject;
+    }
+
     const newUserMessage = {
       id: Date.now(),
       type: 'user',
@@ -200,7 +190,7 @@ const FDAChatbot = () => {
     // 현재 프로젝트의 메시지도 업데이트
     setProjectMessages(prev => ({
       ...prev,
-      [currentProject.id]: updatedMessages
+      [activeProject.id]: updatedMessages
     }));
     
     setInputMessage('');
@@ -209,7 +199,7 @@ const FDAChatbot = () => {
     startTimer();
 
     try {
-      const apiResponse = await callChatAPI(message);
+      const apiResponse = await callChatAPI(message, activeProject.id);
       // 타이머 정지
       stopTimer();
       
@@ -231,7 +221,7 @@ const FDAChatbot = () => {
       // 프로젝트 메시지도 업데이트
       setProjectMessages(prev => ({
         ...prev,
-        [currentProject.id]: finalMessages
+        [activeProject.id]: finalMessages
       }));
       
     } catch (error) {
@@ -251,7 +241,7 @@ const FDAChatbot = () => {
       // 프로젝트 메시지도 업데이트
       setProjectMessages(prev => ({
         ...prev,
-        [currentProject.id]: finalMessages
+        [activeProject.id]: finalMessages
       }));
     } finally {
       setIsGenerating(false);
@@ -292,124 +282,160 @@ const FDAChatbot = () => {
     }
   };
 
-  const handleFileUpload = (files) => {
-    Array.from(files).forEach(file => {
-      const uploadMessage = {
-        id: Date.now() + Math.random(),
-        type: 'user',
-        content: `📎 파일 업로드됨: ${file.name}`,
-        isFile: true
-      };
-      const updatedMessages = [...messages, uploadMessage];
-      setMessages(updatedMessages);
-      
-      // 프로젝트 메시지도 업데이트
-      setProjectMessages(prev => ({
-        ...prev,
-        [currentProject.id]: updatedMessages
-      }));
-
-      setTimeout(() => {
-        const analysisMessage = {
-          id: Date.now() + Math.random(),
-          type: 'bot',
-          content: `업로드해주신 "${file.name}" 문서를 분석했습니다:`,
-          cfr_references: [
-            {
-              title: '문서 분석 결과',
-              description: '해당 인증서는 FDA 요구사항에 부합하는지 검토했습니다. 파일 분석 기능은 현재 개발 중입니다.'
-            }
-          ]
-        };
-        const finalMessages = [...updatedMessages, analysisMessage];
-        setMessages(finalMessages);
-        
-        // 프로젝트 메시지도 업데이트
-        setProjectMessages(prev => ({
-          ...prev,
-          [currentProject.id]: finalMessages
-        }));
-      }, 1500);
-    });
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setDragOver(false);
-    handleFileUpload(e.dataTransfer.files);
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setDragOver(true);
-  };
-
-  const handleDragLeave = () => {
-    setDragOver(false);
-  };
 
   
 
-  const generateChecklist = () => {
-    alert('체크리스트 생성 기능은 개발 중입니다.');
+
+  // 도움말에서 질문 선택 시 처리
+  const handleHelpQuestionSelect = (question) => {
+    setInputMessage(question);
+    setShowHelpModal(false);
   };
 
-  const downloadReport = () => {
-    alert('보고서 다운로드 기능은 개발 중입니다.');
+  // 시간대별 인사말 생성
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 6) {
+      return "좋은 새벽이에요, 사용자님";
+    } else if (hour < 12) {
+      return "좋은 아침이에요, 사용자님";
+    } else if (hour < 18) {
+      return "좋은 오후에요, 사용자님";
+    } else {
+      return "좋은 저녁이에요, 사용자님";
+    }
   };
 
   // 채팅 컨텐츠 렌더링
-  const renderChatContent = () => (
-    <>
-      {/* 헤더 */}
-      <div className="p-6 border-b border-gray-200 bg-white/80">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-xl font-semibold text-gray-800">{currentProject?.name}</h1>
-            <p className="text-gray-500 text-sm mt-1">FDA 공식 문서를 바탕으로 수출 규제를 빠르게 확인하세요</p>
+  const renderChatContent = () => {
+    // 메시지가 없을 때는 클로드 스타일의 중앙 레이아웃
+    if (messages.length === 0) {
+      return (
+        <>
+        {/* 헤더 */}
+        <div className="p-6 border-b border-gray-200 bg-white/80">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+            <p className="text-sm text-gray-600 leading-relaxed">
+                  FDA 공식 문서를 바탕으로 정확한 정보를 제공합니다.
+                </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowHelpModal(true)}
+                className="flex items-center gap-2 bg-yellow-50 hover:bg-yellow-100 text-yellow-700 px-4 py-2 rounded-lg border border-yellow-200 hover:border-yellow-300 transition-colors"
+              >
+                <Lightbulb className="w-4 h-4" />
+                <span className="text-sm font-medium">질문이 어려우신가요? 도움말 보기</span>
+              </button>
+            </div>
           </div>
-          <button
-            onClick={resetConversation}
-            className="text-gray-500 hover:text-gray-700 text-sm px-3 py-1 rounded border border-gray-300 hover:border-gray-400 transition-colors"
-          >
-            대화 초기화
-          </button>
         </div>
-      </div>
 
-      {/* 채팅 영역 */}
-      <div ref={chatAreaRef} className="flex-1 p-0 overflow-y-auto">
-        <MessageList
-          messages={messages}
-          isTyping={isGenerating}
-          elapsedTime={elapsedTime}
-          onGenerateChecklist={generateChecklist}
-          onDownloadReport={downloadReport}
+          {/* 중앙 환영 영역 */}
+          <div className="flex-1 flex items-center justify-center p-6">
+            <div className="text-center max-w-2xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-800 mb-4">
+                {getGreeting()}
+              </h2>
+              <p className="text-gray-600 text-lg mb-8">FDA 식품 수출 규제에 대해 무엇이든 물어보세요</p>
+              
+              {/* 중앙 입력창 */}
+              <div className="max-w-2xl mx-auto">
+                <InputBar
+                  inputMessage={inputMessage}
+                  setInputMessage={setInputMessage}
+                  isTyping={isGenerating}
+                  onSend={sendMessage}
+                  onKeyPress={handleKeyPress}
+                  isCentered={true}
+                />
+              </div>
+            </div>
+          </div>
+        </>
+      );
+    }
+
+    // 메시지가 있을 때는 일반 채팅 레이아웃
+    return (
+      <>
+        {/* 헤더 */}
+        <div className="p-6 border-b border-gray-200 bg-white/80">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              {currentProject ? (
+                <div className="flex items-center gap-2">
+                  <h1 className="text-xl font-semibold text-gray-800">{currentProject.name}</h1>
+                  <button
+                    onClick={() => {
+                      const newName = prompt('프로젝트 이름을 변경하세요:', currentProject.name);
+                      if (newName && newName.trim()) {
+                        console.log('프로젝트 이름 변경:', currentProject.name, '->', newName.trim());
+                        setProjects(prev => prev.map(p => 
+                          p.id === currentProject.id ? { ...p, name: newName.trim() } : p
+                        ));
+                      }
+                    }}
+                    className="text-gray-400 hover:text-gray-600 text-sm px-2 py-1 rounded hover:bg-gray-100 transition-colors"
+                    title="프로젝트 이름 변경"
+                  >
+                    ✏️
+                  </button>
+                </div>
+              ) : (
+                <h1 className="text-xl font-semibold text-gray-800">FDA Export Assistant</h1>
+              )}
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowHelpModal(true)}
+                className="flex items-center gap-2 bg-yellow-50 hover:bg-yellow-100 text-yellow-700 px-4 py-2 rounded-lg border border-yellow-200 hover:border-yellow-300 transition-colors"
+              >
+                <Lightbulb className="w-4 h-4" />
+                <span className="text-sm font-medium">질문이 어려우신가요? 도움말 보기</span>
+              </button>
+              {currentProject && (
+                <button
+                  onClick={resetConversation}
+                  className="text-gray-500 hover:text-gray-700 text-sm px-3 py-1 rounded border border-gray-300 hover:border-gray-400 transition-colors"
+                >
+                  대화 초기화
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+
+        {/* 채팅 영역 */}
+        <div ref={chatAreaRef} className="flex-1 p-0 overflow-y-auto">
+          <MessageList
+            messages={messages}
+            isTyping={isGenerating}
+            elapsedTime={elapsedTime}
+            setInputMessage={setInputMessage}
+            sendMessage={sendMessage}
+          />
+        </div>
+
+        {/* 입력 영역 */}
+        <InputBar
+          inputMessage={inputMessage}
           setInputMessage={setInputMessage}
-          sendMessage={sendMessage}
+          isTyping={isGenerating}
+          onSend={sendMessage}
+          onKeyPress={handleKeyPress}
         />
-      </div>
-
-      {/* 입력 영역 */}
-      <InputBar
-        inputMessage={inputMessage}
-        setInputMessage={setInputMessage}
-        isTyping={isGenerating}
-        onSend={sendMessage}
-        onKeyPress={handleKeyPress}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        dragOver={dragOver}
-        fileInputRef={fileInputRef}
-        onFileChange={(e) => handleFileUpload(e.target.files)}
-      />
-    </>
-  );
+      </>
+    );
+  };
 
   const deleteProject = async (projectId) => {
     if (projects.length <= 1) {
-      alert('최소 하나의 프로젝트는 유지되어야 합니다.');
+      // 마지막 프로젝트를 삭제하면 프로젝트가 없는 상태로 변경
+      setProjects([]);
+      setMessages([]);
       return;
     }
     
@@ -449,7 +475,7 @@ const FDAChatbot = () => {
   
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-indigo-100">
+    <div className="flex h-screen bg-gradient-to-br from-indigo-50 via-gray-50 to-indigo-50">
       {/* 사이드바 */}
       <Sidebar
         projects={projects}
@@ -458,10 +484,20 @@ const FDAChatbot = () => {
         onDeleteProject={deleteProject}
       />
 
-      {/* 메인 컨텐츠 */}
-      <div className="flex-1 flex flex-col bg-white/95 backdrop-blur-sm">
-        {renderChatContent()}
+      {/* 메인 컨텐츠 - 가운데 정렬 */}
+      <div className="flex-1 flex justify-center">
+        <div className="w-full max-w-4xl flex flex-col bg-white/95 backdrop-blur-sm">
+          {renderChatContent()}
+        </div>
       </div>
+
+      {/* 도움말 모달 */}
+      <HelpModal
+        isOpen={showHelpModal}
+        onClose={() => setShowHelpModal(false)}
+        onSelectQuestion={handleHelpQuestionSelect}
+        onSendMessage={sendMessage}
+      />
     </div>
   );
 };
