@@ -19,7 +19,7 @@ class QdrantService:
         """텍스트를 임베딩으로 변환"""
         response = self.openai_client.embeddings.create(
             input=text,
-            model="text-embedding-ada-002"
+            model="text-embedding-3-small"
         )
         return response.data[0].embedding
     
