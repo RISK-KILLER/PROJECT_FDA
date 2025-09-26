@@ -19,7 +19,8 @@ app = FastAPI(title="FDA Export Assistant API - ReAct Agent")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],
+    allow_origins=["http://3.34.177.107:3000", 
+    "http://3.34.177.107:3001"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -54,6 +55,16 @@ class ChatResponse(BaseModel):
 @app.get("/")
 async def root():
     return {"message": "FDA Export Assistant API - ReAct Agent"}
+
+@app.get("/health")
+async def health_check():
+    """헬스체크 엔드포인트"""
+    return {
+        "status": "healthy",
+        "timestamp": datetime.now().isoformat(),
+        "agent_available": fda_agent is not None,
+        "project_count": len(project_agents)
+    }
 
 def _extract_citations(text: str) -> Dict[str, List]:
     """Very lightweight citation extractor to surface common CFR links."""

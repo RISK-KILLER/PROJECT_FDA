@@ -1,0 +1,16 @@
+[Unit]
+Description=PROJECT_FDA Docker Services
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/ec2-user/PROJECT_FDA
+ExecStart=/home/ec2-user/PROJECT_FDA/start-services.sh
+ExecStop=/usr/local/bin/docker-compose -f /home/ec2-user/PROJECT_FDA/docker-compose.yml down
+TimeoutStartSec=300
+TimeoutStopSec=60
+
+[Install]
+WantedBy=multi-user.target
