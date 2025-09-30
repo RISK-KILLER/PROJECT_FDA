@@ -1,0 +1,19 @@
+{
+  "name": "project_fda",
+  "version": "1.0.0",
+  "description": "RAG-based FDA Export Assistant",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RISK-KILLER/PROJECT_FDA.git"
+  },
+  "keywords": ["RAG", "FDA", "export"],
+  "author": "",
+  "license": "ISC"
+}

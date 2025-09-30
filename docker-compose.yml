@@ -1,0 +1,23 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3001:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8002
+    volumes:
+      - ./frontend/src:/app/src
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    ports:
+      - "8002:8000"
+    environment:
+      - QDRANT_URL=${QDRANT_URL}
+      - QDRANT_API_KEY=${QDRANT_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
