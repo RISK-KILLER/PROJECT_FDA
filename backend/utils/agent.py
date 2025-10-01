@@ -387,13 +387,11 @@ Use the most relevant collections based on the product characteristics above.
         return "\n".join(formatted)
 
     def chat(self, query: str) -> dict:
-        """Phase 1: 병렬 검색 + ReAct 분석"""
+        """Phase 1: 병렬 검색 + 충분성 평가 + ReAct 분석"""
         try:
-            # ✅ 필터 제거: 항상 Orchestrator 시도
             product = self._extract_product_name(query)
             
-            # 제품명이 있으면 분해 및 병렬 검색
-            if product and len(product) > 1:  # 최소 2글자 이상
+            if product and len(product) > 1:
                 print(f"📦 제품 감지: {product}")
                 
                 try:
@@ -406,45 +404,45 @@ Use the most relevant collections based on the product characteristics above.
                     from utils.orchestrator import SimpleOrchestrator
                     orchestrator = SimpleOrchestrator()
                     
-                    # 관련 컬렉션 결정
                     collections = orchestrator.determine_collections(decomposition)
                     print(f"📚 검색할 컬렉션: {collections}")
                     
-                    # 병렬 검색 실행
                     parallel_results = orchestrator.parallel_search(
                         query="food import export FDA requirements",
                         collections=collections,
                         decomposition=decomposition
                     )
                     
-                    # 결과 병합 및 순위화
                     ranked_results = orchestrator.merge_and_rank(parallel_results)
                     print(f"⚡ 병렬 검색 완료: {parallel_results['search_time']:.2f}초, {len(ranked_results)}개 결과")
                     
-                    # 병렬 검색 결과를 컨텍스트에 포함
-                    search_summary = self._format_parallel_results(ranked_results)
+                    # ✨ 병렬 검색 결과 충분성 평가
+                    if self._is_parallel_result_sufficient(ranked_results, decomposition):
+                        print("✅ 병렬 검색 결과만으로 충분 - 직접 답변 생성")
+                        return self._generate_direct_response(query, ranked_results, decomposition)
                     
+                    # 불충분한 경우 ReAct Agent 실행
+                    print("🔄 추가 정보 필요 - ReAct Agent 실행")
+                    search_summary = self._format_parallel_results(ranked_results)
                     enhanced_query = f"""
-    {self._augment_query(query, decomposition)}
+{self._augment_query(query, decomposition)}
 
-    === 병렬 검색 결과 (이미 수집됨) ===
-    {search_summary}
+=== 병렬 검색 결과 (이미 수집됨) ===
+{search_summary}
 
-    위 병렬 검색 결과를 참고하되, 부족한 부분은 추가 도구를 사용하여 보완하세요.
-    주의: 이미 찾은 정보는 다시 검색하지 마세요.
-    """
+위 병렬 검색 결과를 참고하되, 부족한 부분은 추가 도구를 사용하여 보완하세요.
+주의: 이미 찾은 정보는 다시 검색하지 마세요.
+"""
                     
                 except Exception as e:
                     print(f"⚠️ 병렬 검색 실패: {e}, Agent만 사용")
                     enhanced_query = query
                     
-                # ReAct Agent 실행
                 context = self.memory.get_context_for_agent()
                 full_query = f"{context}\n{enhanced_query}" if context else enhanced_query
                 
             else:
-                # 제품명 없으면 일반 쿼리로 처리
-                print("📝 일반 쿼리 처리")
+                print("🔍 일반 쿼리 처리")
                 context = self.memory.get_context_for_agent()
                 full_query = f"{context}\n{query}" if context else query
             
@@ -453,7 +451,6 @@ Use the most relevant collections based on the product characteristics above.
             response_text = str(response)
             citations = self._extract_citations_from_response(response)
             
-            # 메모리 저장
             used_tools = self._extract_used_tools(response)
             self.memory.add_message("user", query)
             self.memory.add_message("assistant", response_text, used_tools)
@@ -474,6 +471,98 @@ Use the most relevant collections based on the product characteristics above.
                 "sources": [],
                 "keywords": []
             }
+
+    def _is_parallel_result_sufficient(self, results: List[Dict], decomposition: dict) -> bool:
+        """병렬 검색 결과의 충분성 평가"""
+        
+        # 기본 조건 체크
+        if not results or len(results) < 5:
+            return False
+        
+        # 평균 점수 계산
+        avg_score = sum(r['score'] for r in results) / len(results)
+        if avg_score < 0.65:
+            return False
+        
+        # 컬렉션 다양성 체크 (최소 3개 이상의 컬렉션에서 결과)
+        unique_collections = set(r['collection'] for r in results)
+        if len(unique_collections) < 3:
+            return False
+        
+        # 핵심 컬렉션 포함 여부 체크
+        essential_collections = {'guidance', 'ecfr', 'gras'}  # 라벨링, 규정, 안전성
+        if not any(c in unique_collections for c in essential_collections):
+            return False
+        
+        # 알레르기 정보가 필요한 경우 guidance 결과 필수
+        if decomposition.get('allergens') and 'guidance' not in unique_collections:
+            return False
+        
+        return True
+
+    def _generate_direct_response(self, query: str, results: List[Dict], decomposition: dict) -> dict:
+        """병렬 검색 결과만으로 직접 답변 생성"""
+        
+        # 결과를 카테고리별로 그룹화
+        categorized = {
+            'regulations': [],
+            'labeling': [],
+            'safety': [],
+            'import': []
+        }
+        
+        for result in results:
+            collection = result['collection']
+            if collection in ['ecfr', 'usc']:
+                categorized['regulations'].append(result)
+            elif collection in ['guidance']:
+                categorized['labeling'].append(result)
+            elif collection in ['gras', 'dwpe']:
+                categorized['safety'].append(result)
+            elif collection in ['fsvp', 'rpm']:
+                categorized['import'].append(result)
+        
+        # GPT-4로 답변 생성
+        prompt = f"""
+사용자 질문: {query}
+
+제품 분석:
+- 재료: {', '.join(decomposition.get('ingredients', []))}
+- 알레르기: {', '.join(decomposition.get('allergens', []))}
+- 원산지: {decomposition.get('origin', '')}
+- 위험도: {decomposition.get('risk_level', '')}
+
+검색된 규제 정보:
+1. 규정: {self._summarize_results(categorized['regulations'])}
+2. 라벨링: {self._summarize_results(categorized['labeling'])}
+3. 안전성: {self._summarize_results(categorized['safety'])}
+4. 수입 절차: {self._summarize_results(categorized['import'])}
+
+위 정보를 바탕으로 한국어로 구체적이고 실용적인 답변을 작성하세요.
+"""
+        
+        response = Settings.llm.complete(prompt)
+        
+        # 출처 정보 생성
+        sources = list(set(r.get('title', '') for r in results if r.get('title')))
+        
+        return {
+            "content": response.text,
+            "cfr_references": [],
+            "sources": sources[:5],
+            "keywords": list(set(r['collection'] for r in results))
+        }
+
+    def _summarize_results(self, results: List[Dict]) -> str:
+        """결과 요약"""
+        if not results:
+            return "관련 정보 없음"
+        
+        summaries = []
+        for r in results[:2]:  # 상위 2개만
+            summaries.append(f"{r.get('title', 'N/A')}: {r.get('text', '')[:100]}")
+        
+        return "; ".join(summaries)
 
     def _generate_fallback_response(self, query: str) -> str:
         """검색 실패시 폴백 응답"""

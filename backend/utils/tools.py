@@ -27,7 +27,7 @@ def create_fda_tools():
     llm = OpenAI(model="gpt-4o-mini", temperature=0)
     
     # 실제 존재하는 컬렉션 목록
-    actual_collections = ['dwpe', 'ecfr', 'fsvp', 'gras', 'guidance', 'rpm', 'usc']
+    actual_collections = ['dwpe', 'ecfr', 'fsvp', 'gras', 'guidance', 'usc'] # RPM 일시적으로 제외
     
     tools = []
     

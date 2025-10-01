@@ -123,7 +123,7 @@ def smart_collection_selection(decomposition: dict) -> list:
     모든 컬렉션을 검색하여 정보 누락 방지
     조건문 없이 항상 7개 전체 반환
     """
-    return ['ecfr', 'fsvp', 'guidance', 'gras', 'dwpe', 'rpm', 'usc']
+    return ['ecfr', 'fsvp', 'guidance', 'gras', 'dwpe', 'usc'] # RPM 일시적으로 제외
 
 
 def prioritize_results_enhanced(search_results: dict, decomposition: dict) -> dict:

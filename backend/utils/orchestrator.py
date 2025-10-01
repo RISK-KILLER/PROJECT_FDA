@@ -39,6 +39,11 @@ class SimpleOrchestrator:
         # 컬렉션별 최적화된 쿼리 생성
         optimized_queries = self._generate_optimized_queries(collections, decomposition)
         
+        # 🔍 각 컬렉션별 쿼리 로깅
+        print("🔍 컬렉션별 최적화된 검색 쿼리:")
+        for collection, collection_query in optimized_queries.items():
+            print(f"  {collection}: {collection_query}")
+        
         futures = []
         for collection in collections:
             # 각 컬렉션에 맞는 쿼리 사용
@@ -57,13 +62,23 @@ class SimpleOrchestrator:
             "results_by_collection": {}
         }
         
+        print("📊 컬렉션별 검색 결과:")
         for collection, future in futures:
             try:
                 result = future.result(timeout=10)  # 10초 타임아웃
                 combined["results_by_collection"][collection] = result
+                
+                # 📊 검색 결과 점수 분포 확인
+                if result:
+                    scores = [r.score for r in result]
+                    print(f"  {collection}: {len(result)}개 결과, 점수: {[f'{s:.3f}' for s in scores[:3]]}")
+                else:
+                    print(f"  {collection}: 0개 결과")
+                    
             except Exception as e:
                 print(f"Error getting result for {collection}: {e}")
                 combined["results_by_collection"][collection] = []
+                print(f"  {collection}: 오류 발생")
         
         combined["search_time"] = time.time() - start_time
         return combined
