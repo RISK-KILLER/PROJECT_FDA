@@ -282,38 +282,68 @@ allergens: allergen1, allergen2
                     "import_type": "commercial"
                 }
 
-    def _is_compound_food(self, query: str) -> bool:
-        """복합 식품 여부 판단"""
-        # 한국 음식 패턴
-        korean_foods = ["김치", "김밥", "만두", "새우튀김", "불고기", "떡볶이", "비빔밥"]
-        # 복합 식품 키워드
-        compound_keywords = ["튀김", "볶음", "찜", "구이", "조림"]
-        
-        query_lower = query.lower()
-        return any(food in query for food in korean_foods) or \
-               any(keyword in query for keyword in compound_keywords)
-
     def _extract_product_name(self, query: str) -> str:
-        """쿼리에서 제품명 추출"""
-        # 간단한 패턴 매칭
-        korean_foods = ["김치", "김밥", "만두", "새우튀김", "불고기", "떡볶이", "비빔밥"]
-        for food in korean_foods:
-            if food in query:
-                return food
+        """LLM을 사용하여 쿼리에서 제품명 추출"""
+        prompt = f"""
+Analyze this user query and determine if it contains a FOOD PRODUCT name.
+
+Query: "{query}"
+
+Rules:
+- Return ONLY the food product name if one exists
+- Return "None" if this is a general question (about regulations, procedures, concepts)
+- Examples of products: "김치", "새우튀김", "냉동만두", "chicken nuggets"
+- Examples of NOT products: "HACCP", "FDA", "규정", "절차", "라벨링"
+
+Answer with ONLY the product name or "None":
+"""
         
-        # 패턴으로 추출 시도
-        patterns = [
-            r"'([^']+)'",  # '제품명' 형태
-            r"\"([^\"]+)\"",  # "제품명" 형태
-            r"([가-힣]+(?:튀김|볶음|찜|구이))",  # 한글+조리법
-        ]
+        try:
+            response = Settings.llm.complete(prompt)
+            result = response.text.strip()
+            
+            # "None" 또는 "none" 반환 시 None으로 변환
+            if result.lower() == "none":
+                return None
+            
+            return result
+            
+        except Exception as e:
+            print(f"LLM product extraction failed: {e}")
+            # 에러 시 안전하게 None 반환
+            return None
+
+    def _augment_general_query(self, original_query: str) -> str:
+        """일반 질문에 대한 LLM 쿼리 증강"""
+        prompt = f"""
+다음 사용자 질문을 FDA 규제 데이터베이스 검색에 최적화된 영어 쿼리로 변환하고 확장하세요.
+
+사용자 질문: {original_query}
+
+다음 요소들을 포함하여 검색 쿼리를 생성하세요:
+1. 핵심 키워드를 영어로 변환
+2. 관련 동의어 및 전문 용어 추가
+3. FDA 규제 맥락에 맞는 검색어 확장
+4. 컬렉션별 특화 키워드 포함
+
+예시:
+- "비용이 얼마나 드나요?" → "costs payment fees supervision relabeling expenses"
+- "어떤 절차가 필요한가요?" → "procedures process requirements steps documentation"
+- "규정은 무엇인가요?" → "regulations requirements CFR guidelines compliance"
+
+변환된 검색 쿼리만 반환하세요 (설명 없이):
+"""
         
-        for pattern in patterns:
-            match = re.search(pattern, query)
-            if match:
-                return match.group(1)
-        
-        return query.split()[0]  # 첫 단어 반환
+        try:
+            response = Settings.llm.complete(prompt)
+            augmented_query = response.text.strip()
+            
+            # 원본 쿼리와 증강된 쿼리 결합
+            return f"{original_query}\n\nEnhanced search query: {augmented_query}"
+            
+        except Exception as e:
+            print(f"Query augmentation failed: {e}")
+            return original_query
 
     def _augment_query(self, original_query: str, decomposition: dict) -> str:
         """분해된 10개 요소를 모두 활용하는 쿼리 증강"""
@@ -387,43 +417,57 @@ Use the most relevant collections based on the product characteristics above.
         return "\n".join(formatted)
 
     def chat(self, query: str) -> dict:
-        """Phase 1: 병렬 검색 + 충분성 평가 + ReAct 분석"""
+        """사용자 제안 구조: 제품 질문은 분해, 일반 질문은 LLM 증강"""
         try:
             product = self._extract_product_name(query)
             
-            if product and len(product) > 1:
-                print(f"📦 제품 감지: {product}")
+            if product:
+                # 제품 질문: 분해 방식
+                print(f"📦 제품 질문 감지: {product}")
+                decomposition = self._decompose_product(product)
+                search_query = query  # 원본 사용
+                print(f"🔬 제품 분해 완료: {decomposition.get('category')}")
+            else:
+                # 일반 질문: LLM 증강 방식
+                print("🔍 일반 질문 감지 - LLM 증강 적용")
+                decomposition = None
+                search_query = self._augment_general_query(query)  # 여기서 증강!
+                print(f"✨ 증강된 쿼리: {search_query[:100]}...")
+            
+            # orchestrator에 전달 (순수 검색만 담당)
+            from utils.orchestrator import SimpleOrchestrator
+            orchestrator = SimpleOrchestrator()
+            
+            if decomposition:
+                # 제품 질문: 분해 기반 컬렉션 선택
+                collections = orchestrator.determine_collections(decomposition)
+            else:
+                # 일반 질문: 기본 컬렉션 사용
+                collections = ['guidance', 'ecfr', 'gras', 'dwpe', 'fsvp', 'rpm', 'usc']
+            
+            print(f"📚 검색할 컬렉션: {collections}")
+            
+            # 병렬 검색 실행
+            parallel_results = orchestrator.parallel_search(
+                query=search_query,  # 증강된 또는 원본
+                collections=collections,
+                decomposition=decomposition
+            )
+            
+            ranked_results = orchestrator.merge_and_rank(parallel_results)
+            print(f"⚡ 병렬 검색 완료: {parallel_results['search_time']:.2f}초, {len(ranked_results)}개 결과")
+            
+            # 결과 충분성 평가 및 응답 생성
+            if self._is_parallel_result_sufficient(ranked_results, decomposition or {}):
+                # decomposition 있든 없든, 충분하면 직접 답변
+                print("✅ 병렬 검색 결과만으로 충분 - 직접 답변 생성")
+                return self._generate_direct_response(query, ranked_results, decomposition)
+            else:
+                # ReAct Agent로 추가 분석
+                print("🔄 ReAct Agent로 추가 분석")
+                search_summary = self._format_parallel_results(ranked_results)
                 
-                try:
-                    # 제품 분해
-                    decomposition = self._decompose_product(product)
-                    print(f"🔬 분해 완료: {decomposition.get('category')}")
-                    
-                    # Phase 1: 병렬 검색
-                    print("🔍 병렬 검색 시작...")
-                    from utils.orchestrator import SimpleOrchestrator
-                    orchestrator = SimpleOrchestrator()
-                    
-                    collections = orchestrator.determine_collections(decomposition)
-                    print(f"📚 검색할 컬렉션: {collections}")
-                    
-                    parallel_results = orchestrator.parallel_search(
-                        query="food import export FDA requirements",
-                        collections=collections,
-                        decomposition=decomposition
-                    )
-                    
-                    ranked_results = orchestrator.merge_and_rank(parallel_results)
-                    print(f"⚡ 병렬 검색 완료: {parallel_results['search_time']:.2f}초, {len(ranked_results)}개 결과")
-                    
-                    # ✨ 병렬 검색 결과 충분성 평가
-                    if self._is_parallel_result_sufficient(ranked_results, decomposition):
-                        print("✅ 병렬 검색 결과만으로 충분 - 직접 답변 생성")
-                        return self._generate_direct_response(query, ranked_results, decomposition)
-                    
-                    # 불충분한 경우 ReAct Agent 실행
-                    print("🔄 추가 정보 필요 - ReAct Agent 실행")
-                    search_summary = self._format_parallel_results(ranked_results)
+                if decomposition:
                     enhanced_query = f"""
 {self._augment_query(query, decomposition)}
 
@@ -433,34 +477,35 @@ Use the most relevant collections based on the product characteristics above.
 위 병렬 검색 결과를 참고하되, 부족한 부분은 추가 도구를 사용하여 보완하세요.
 주의: 이미 찾은 정보는 다시 검색하지 마세요.
 """
-                    
-                except Exception as e:
-                    print(f"⚠️ 병렬 검색 실패: {e}, Agent만 사용")
-                    enhanced_query = query
-                    
+                else:
+                    enhanced_query = f"""
+{search_query}
+
+=== 병렬 검색 결과 (이미 수집됨) ===
+{search_summary}
+
+위 병렬 검색 결과를 참고하되, 부족한 부분은 추가 도구를 사용하여 보완하세요.
+주의: 이미 찾은 정보는 다시 검색하지 마세요.
+"""
+                
                 context = self.memory.get_context_for_agent()
                 full_query = f"{context}\n{enhanced_query}" if context else enhanced_query
                 
-            else:
-                print("🔍 일반 쿼리 처리")
-                context = self.memory.get_context_for_agent()
-                full_query = f"{context}\n{query}" if context else query
-            
-            # ReAct 에이전트 실행
-            response = self.agent.chat(full_query)
-            response_text = str(response)
-            citations = self._extract_citations_from_response(response)
-            
-            used_tools = self._extract_used_tools(response)
-            self.memory.add_message("user", query)
-            self.memory.add_message("assistant", response_text, used_tools)
-            
-            return {
-                "content": response_text,
-                "cfr_references": citations.get("cfr_references", []),
-                "sources": citations.get("sources", []),
-                "keywords": citations.get("keywords", []),
-            }
+                # ReAct 에이전트 실행
+                response = self.agent.chat(full_query)
+                response_text = str(response)
+                citations = self._extract_citations_from_response(response)
+                
+                used_tools = self._extract_used_tools(response)
+                self.memory.add_message("user", query)
+                self.memory.add_message("assistant", response_text, used_tools)
+                
+                return {
+                    "content": response_text,
+                    "cfr_references": citations.get("cfr_references", []),
+                    "sources": citations.get("sources", []),
+                    "keywords": citations.get("keywords", []),
+                }
             
         except Exception as e:
             print(f"Error in chat: {e}")
@@ -473,72 +518,97 @@ Use the most relevant collections based on the product characteristics above.
             }
 
     def _is_parallel_result_sufficient(self, results: List[Dict], decomposition: dict) -> bool:
-        """병렬 검색 결과의 충분성 평가"""
+        """병렬 검색 결과의 충분성 평가 (제품 질문과 일반 질문 모두 지원)"""
+        print(f"\n🔍 충분성 평가 시작")
+        print(f"  - 전체 결과 개수: {len(results)}")
         
         # 기본 조건 체크
         if not results or len(results) < 5:
+            print(f"  ❌ 결과 부족: {len(results)}개")
             return False
         
+        # GRAS 필터링 - 일단 비활성화
+        # filtered_results = self._filter_gras_noise(results, decomposition)
+        filtered_results = results  # 그대로 사용
+        
         # 평균 점수 계산
-        avg_score = sum(r['score'] for r in results) / len(results)
-        if avg_score < 0.65:
+        avg_score = sum(r['score'] for r in filtered_results) / len(filtered_results)
+        print(f"  - 평균 점수: {avg_score:.3f} (임계값: 0.60)")
+        if avg_score < 0.60:
+            print(f"  ❌ 평균 점수 부족")
             return False
         
         # 컬렉션 다양성 체크 (최소 3개 이상의 컬렉션에서 결과)
-        unique_collections = set(r['collection'] for r in results)
+        unique_collections = set(r['collection'] for r in filtered_results)
+        print(f"  - 컬렉션 다양성: {len(unique_collections)}개 {list(unique_collections)}")
         if len(unique_collections) < 3:
+            print(f"  ❌ 컬렉션 다양성 부족")
             return False
         
-        # 핵심 컬렉션 포함 여부 체크
+        # 핵심 컬렉션 포함 여부 체크 (일반 질문도 동일한 기준 적용)
         essential_collections = {'guidance', 'ecfr', 'gras'}  # 라벨링, 규정, 안전성
-        if not any(c in unique_collections for c in essential_collections):
+        has_essential = [c for c in essential_collections if c in unique_collections]
+        print(f"  - 필수 컬렉션: {has_essential}")
+        if not has_essential:
+            print(f"  ❌ 필수 컬렉션 없음")
             return False
         
-        # 알레르기 정보가 필요한 경우 guidance 결과 필수
-        if decomposition.get('allergens') and 'guidance' not in unique_collections:
-            return False
+        # 알레르기 정보가 필요한 경우 guidance 결과 필수 (제품 질문만)
+        # if decomposition and decomposition.get('allergens') and 'guidance' not in unique_collections:
+        #     return False
         
+        print(f"  ✅ 충분성 평가 통과!\n")
         return True
 
     def _generate_direct_response(self, query: str, results: List[Dict], decomposition: dict) -> dict:
-        """병렬 검색 결과만으로 직접 답변 생성"""
+        """병렬 검색 결과만으로 직접 답변 생성 (제품 질문과 일반 질문 모두 지원)"""
         
-        # 결과를 카테고리별로 그룹화
-        categorized = {
-            'regulations': [],
-            'labeling': [],
-            'safety': [],
-            'import': []
-        }
+        # 전체 검색 결과를 풍부하게 전달
+        full_context = "\n\n".join([
+            f"[{i+1}] {r['collection'].upper()} (점수: {r['score']:.3f})\n"
+            f"제목: {r.get('title', 'N/A')}\n"
+            f"내용: {r.get('text', '')[:800]}"  # 800자로 대폭 확대
+            for i, r in enumerate(results[:10])
+        ])
         
-        for result in results:
-            collection = result['collection']
-            if collection in ['ecfr', 'usc']:
-                categorized['regulations'].append(result)
-            elif collection in ['guidance']:
-                categorized['labeling'].append(result)
-            elif collection in ['gras', 'dwpe']:
-                categorized['safety'].append(result)
-            elif collection in ['fsvp', 'rpm']:
-                categorized['import'].append(result)
-        
-        # GPT-4로 답변 생성
-        prompt = f"""
+        if decomposition:
+            # 제품 질문용 프롬프트
+            prompt = f"""
 사용자 질문: {query}
 
-제품 분석:
-- 재료: {', '.join(decomposition.get('ingredients', []))}
-- 알레르기: {', '.join(decomposition.get('allergens', []))}
-- 원산지: {decomposition.get('origin', '')}
-- 위험도: {decomposition.get('risk_level', '')}
+제품 특성:
+{json.dumps(decomposition, indent=2, ensure_ascii=False)}
 
-검색된 규제 정보:
-1. 규정: {self._summarize_results(categorized['regulations'])}
-2. 라벨링: {self._summarize_results(categorized['labeling'])}
-3. 안전성: {self._summarize_results(categorized['safety'])}
-4. 수입 절차: {self._summarize_results(categorized['import'])}
+검색된 FDA 규제 문서 (총 {len(results)}개):
 
-위 정보를 바탕으로 한국어로 구체적이고 실용적인 답변을 작성하세요.
+{full_context}
+
+위 문서들을 종합하여 다음 사항을 포함한 답변을 작성하세요:
+1. 구체적인 CFR 규정 번호와 내용
+2. Import Alert 여부
+3. 알레르기 라벨링 구체적 요구사항
+4. FSVP 검증 절차
+5. 실무 체크리스트
+
+한국어로 구체적이고 실용적인 답변을 제공하세요.
+"""
+        else:
+            # 일반 질문용 프롬프트
+            prompt = f"""
+사용자 질문: {query}
+
+검색된 FDA 규제 문서 (총 {len(results)}개):
+
+{full_context}
+
+위 문서들을 종합하여 사용자 질문에 대한 구체적이고 정확한 답변을 작성하세요.
+다음 사항을 포함하세요:
+1. 관련 CFR 규정 번호와 구체적 내용
+2. 실무 가이드라인 및 절차
+3. 구체적인 요구사항 및 기준
+4. 실무 체크리스트 (해당하는 경우)
+
+한국어로 명확하고 실용적인 답변을 제공하세요.
 """
         
         response = Settings.llm.complete(prompt)
@@ -553,16 +623,6 @@ Use the most relevant collections based on the product characteristics above.
             "keywords": list(set(r['collection'] for r in results))
         }
 
-    def _summarize_results(self, results: List[Dict]) -> str:
-        """결과 요약"""
-        if not results:
-            return "관련 정보 없음"
-        
-        summaries = []
-        for r in results[:2]:  # 상위 2개만
-            summaries.append(f"{r.get('title', 'N/A')}: {r.get('text', '')[:100]}")
-        
-        return "; ".join(summaries)
 
     def _generate_fallback_response(self, query: str) -> str:
         """검색 실패시 폴백 응답"""

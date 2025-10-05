@@ -8,7 +8,7 @@ import threading
 from utils.collection_strategy import generate_optimized_query, smart_collection_selection, COLLECTION_STRATEGY
 
 class SimpleOrchestrator:
-    """병렬 검색을 위한 오케스트레이터"""
+    """순수 검색 전용 오케스트레이터 - 책임 분리"""
     
     def __init__(self):
         self.qdrant_service = QdrantService()
@@ -33,16 +33,16 @@ class SimpleOrchestrator:
             return []
     
     def parallel_search(self, query: str, collections: List[str], decomposition: dict = None) -> Dict[str, Any]:
-        """컬렉션별 최적화된 쿼리로 병렬 검색"""
+        """순수 검색 기능: 컬렉션별 최적화된 쿼리로 병렬 검색 실행"""
         start_time = time.time()
         
-        # 컬렉션별 최적화된 쿼리 생성
-        optimized_queries = self._generate_optimized_queries(collections, decomposition)
+        # 컬렉션별 최적화된 쿼리 생성 (query 파라미터 전달)
+        optimized_queries = self._generate_optimized_queries(collections, decomposition, query)
         
         # 🔍 각 컬렉션별 쿼리 로깅
         print("🔍 컬렉션별 최적화된 검색 쿼리:")
         for collection, collection_query in optimized_queries.items():
-            print(f"  {collection}: {collection_query}")
+            print(f"  {collection}: {collection_query[:80]}...")  # 80자만 출력
         
         futures = []
         for collection in collections:
@@ -83,50 +83,78 @@ class SimpleOrchestrator:
         combined["search_time"] = time.time() - start_time
         return combined
     
-    def _generate_optimized_queries(self, collections: List[str], decomposition: dict = None) -> dict:
+    def _generate_optimized_queries(self, collections: List[str], decomposition: dict = None, raw_query: str = None) -> dict:
         """컬렉션별 최적화된 쿼리 생성 (전략 문서 기반)"""
         queries = {}
         
         for collection in collections:
             if decomposition:
+                # 제품 분해 기반 쿼리 (기존)
                 queries[collection] = generate_optimized_query(collection, decomposition)
+            elif raw_query:
+                # 일반 질문: 증강된 쿼리 활용
+                # "Enhanced search query:" 이후 텍스트만 추출
+                if "Enhanced search query:" in raw_query:
+                    augmented_part = raw_query.split("Enhanced search query:")[1].strip()
+                else:
+                    augmented_part = raw_query
+                
+                # 컬렉션 컨텍스트 추가
+                strategy = COLLECTION_STRATEGY.get(collection, {})
+                context = strategy.get('role', '')
+                queries[collection] = f"{context}: {augmented_part}" if context else augmented_part
             else:
-                # decomposition이 없으면 기본 쿼리
+                # 폴백: 기본 쿼리
                 queries[collection] = "food import export FDA requirements"
         
         return queries
     
-    def merge_and_rank(self, results: Dict[str, Any], min_score: float = 0.3) -> List[Dict]:
-        """가중치 없는 투명한 결과 병합 - 순수 점수만 사용"""
-        all_items = []
+    def merge_and_rank(self, parallel_results: dict) -> List[Dict]:
+        """순수 검색 기능: 병렬 검색 결과를 병합하고 랭킹"""
+        MIN_SCORE = 0.60  # 조정 가능
+        QUOTA_PER_COLLECTION = 2
         
-        for collection, items in results.get("results_by_collection", {}).items():
-            if items:
-                # 컬렉션 메타정보 가져오기
-                collection_info = COLLECTION_STRATEGY.get(collection, {})
-                
-                for item in items:
-                    # 최소 점수 필터링만 적용
-                    if item.score < min_score:
-                        continue
-                    
-                    all_items.append({
-                        "collection": collection,
-                        "collection_role": collection_info.get('role', ''),  # 🚫, 📏, 📋 등
-                        "collection_desc": collection_info.get('description', ''),
-                        "score": item.score,  # 가중치 없는 원래 점수
-                        "text": item.payload.get("text", "")[:200],
-                        "title": item.payload.get("title", ""),
-                        "url": item.payload.get("url", "")
-                    })
+        final = []
+        collection_stats = {}
         
-        # 순수 벡터 유사도 점수로만 정렬
-        all_items.sort(key=lambda x: x["score"], reverse=True)
-        return all_items[:10]
+        for collection, results in parallel_results['results_by_collection'].items():
+            # 점수 필터링
+            qualified = [r for r in results if r.score >= MIN_SCORE]
+            selected = qualified[:QUOTA_PER_COLLECTION]
+            
+            # 컬렉션 메타정보 가져오기
+            collection_info = COLLECTION_STRATEGY.get(collection, {})
+            
+            # 선택된 항목들을 프론트엔드용 형태로 변환
+            for item in selected:
+                final.append({
+                    "collection": collection,
+                    "collection_role": collection_info.get('role', ''),
+                    "collection_desc": collection_info.get('description', ''),
+                    "score": item.score,
+                    "text": item.payload.get("text", "")[:200],
+                    "title": item.payload.get("title", ""),
+                    "url": item.payload.get("url", "")
+                })
+            
+            collection_stats[collection] = {
+                'total': len(results),
+                'qualified': len(qualified),
+                'selected': len(selected),
+                'scores': [r.score for r in selected]
+            }
+        
+        # 디버깅 로그
+        print(f"\n📊 균등 랭킹 결과 (최소 점수: {MIN_SCORE})")
+        for coll, stats in collection_stats.items():
+            print(f"  {coll}: {stats['selected']}개 선발 (점수: {stats['scores']})")
+        print(f"📌 총 {len(final)}개, 컬렉션 {len(collection_stats)}개\n")
+        
+        return sorted(final, key=lambda x: x['score'], reverse=True)
     
     
     def determine_collections(self, decomposition: dict) -> List[str]:
-        """제품 특성에 따른 컬렉션 선택 (실제 7개 컬렉션 기반)"""
+        """순수 검색 기능: 제품 특성에 따른 컬렉션 선택"""
         return smart_collection_selection(decomposition)
     
     def __del__(self):
