@@ -3,13 +3,36 @@
 <html lang="ko">
   <head>
     <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <meta name="theme-color" content="#4f46e5" />
     <meta
       name="description"
       content="FDA Export Assistant - 미국 식품 수출 규제 안내 챗봇"
     />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    
+    <!-- iOS PWA 지원 -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="FDA Assistant" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/icons/icon-192x192.png" />
+    
+    <!-- Android PWA 지원 -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="FDA Assistant" />
+    
+    <!-- Microsoft PWA 지원 -->
+    <meta name="msapplication-TileColor" content="#4f46e5" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    
+    <!-- 추가 메타데이터 -->
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    
     <title>FDA Export Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
