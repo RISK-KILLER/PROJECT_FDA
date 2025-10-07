@@ -19,7 +19,19 @@ app = FastAPI(title="FDA Export Assistant API - ReAct Agent")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],
+    allow_origins=[
+        "http://localhost:3000", 
+        "http://localhost:3001",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:3001",
+        # 모바일 접속을 위한 와일드카드 (개발 환경에서만)
+        "http://192.168.*.*:3000",
+        "http://192.168.*.*:3001",
+        "http://10.*.*.*:3000",
+        "http://10.*.*.*:3001",
+        # 모든 로컬 네트워크 허용 (개발 환경에서만)
+        "*"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
