@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FDA Assistant Icon Generator</title>
+    <style>
+        .icon-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+        .icon-item {
+            text-align: center;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        canvas {
+            border: 1px solid #ddd;
+            margin: 5px;
+        }
+        .download-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>FDA Assistant PWA Icons</h1>
+    <div class="icon-container">
+        <div class="icon-item">
+            <h3>72x72</h3>
+            <canvas id="icon72" width="72" height="72"></canvas>
+            <br>
+            <button class="download-btn" onclick="downloadIcon('icon72', 'icon-72x72.png')">Download</button>
+        </div>
+        <div class="icon-item">
+            <h3>96x96</h3>
+            <canvas id="icon96" width="96" height="96"></canvas>
+            <br>
+            <button class="download-btn" onclick="downloadIcon('icon96', 'icon-96x96.png')">Download</button>
+        </div>
+        <div class="icon-item">
+            <h3>128x128</h3>
+            <canvas id="icon128" width="128" height="128"></canvas>
+            <br>
+            <button class="download-btn" onclick="downloadIcon('icon128', 'icon-128x128.png')">Download</button>
+        </div>
+        <div class="icon-item">
+            <h3>144x144</h3>
+            <canvas id="icon144" width="144" height="144"></canvas>
+            <br>
+            <button class="download-btn" onclick="downloadIcon('icon144', 'icon-144x144.png')">Download</button>
+        </div>
+        <div class="icon-item">
+            <h3>152x152</h3>
+            <canvas id="icon152" width="152" height="152"></canvas>
+            <br>
+            <button class="download-btn" onclick="downloadIcon('icon152', 'icon-152x152.png')">Download</button>
+        </div>
+        <div class="icon-item">
+            <h3>192x192</h3>
+            <canvas id="icon192" width="192" height="192"></canvas>
+            <br>
+            <button class="download-btn" onclick="downloadIcon('icon192', 'icon-192x192.png')">Download</button>
+        </div>
+        <div class="icon-item">
+            <h3>384x384</h3>
+            <canvas id="icon384" width="384" height="384"></canvas>
+            <br>
+            <button class="download-btn" onclick="downloadIcon('icon384', 'icon-384x384.png')">Download</button>
+        </div>
+        <div class="icon-item">
+            <h3>512x512</h3>
+            <canvas id="icon512" width="512" height="512"></canvas>
+            <br>
+            <button class="download-btn" onclick="downloadIcon('icon512', 'icon-512x512.png')">Download</button>
+        </div>
+    </div>
+
+    <script>
+        function drawIcon(canvasId, size) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            // 배경 원
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 - 4, 0, 2 * Math.PI);
+            ctx.fillStyle = '#4f46e5';
+            ctx.fill();
+            ctx.strokeStyle = '#3730a3';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            
+            // FDA 텍스트
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${size/6}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.fillText('FDA', size/2, size/2 - size/8);
+            
+            // 채팅 버블
+            ctx.beginPath();
+            ctx.arc(size/2, size/2 + size/8, size/12, 0, 2 * Math.PI);
+            ctx.fillStyle = 'white';
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(size/2, size/2 + size/8, size/20, 0, 2 * Math.PI);
+            ctx.fillStyle = '#4f46e5';
+            ctx.fill();
+            
+            // 채팅 점들
+            const dotSize = Math.max(1, size/100);
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(size/2 - size/20, size/2 + size/8, dotSize, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(size/2, size/2 + size/8, dotSize, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(size/2 + size/20, size/2 + size/8, dotSize, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Assistant 텍스트
+            ctx.font = `${size/20}px Arial`;
+            ctx.fillStyle = 'white';
+            ctx.globalAlpha = 0.8;
+            ctx.fillText('Assistant', size/2, size/2 + size/4);
+            ctx.globalAlpha = 1;
+        }
+        
+        function downloadIcon(canvasId, filename) {
+            const canvas = document.getElementById(canvasId);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        // 모든 아이콘 그리기
+        drawIcon('icon72', 72);
+        drawIcon('icon96', 96);
+        drawIcon('icon128', 128);
+        drawIcon('icon144', 144);
+        drawIcon('icon152', 152);
+        drawIcon('icon192', 192);
+        drawIcon('icon384', 384);
+        drawIcon('icon512', 512);
+    </script>
+</body>
+</html>

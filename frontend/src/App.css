@@ -2,6 +2,7 @@
   text-align: center;
 }
 
+/* 깔끔한 배경 스타일 */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -9,6 +10,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #fafafa;
 }
 
 code {
@@ -148,6 +150,232 @@ code {
   
   .timer-pulse {
     font-size: 0.75rem;
+  }
+}
+
+/* PWA 모바일 최적화 */
+@media (max-width: 768px) {
+  /* 전체 화면 모드에서의 스크롤 개선 */
+  body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
+  }
+  
+  /* 모바일에서 터치 영역 확대 */
+  button, input, textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* 모바일 사이드바 개선 */
+  .sidebar-mobile {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 280px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    background: white;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  }
+  
+  .sidebar-mobile.open {
+    transform: translateX(0);
+  }
+  
+  /* 모바일 메인 컨텐츠 */
+  .main-content-mobile {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  /* 모바일 헤더 */
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  /* 모바일 메뉴 버튼 */
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  /* 모바일 메시지 리스트 */
+  .mobile-message-list {
+    padding: 1rem;
+    padding-bottom: 120px; /* 입력창 공간 확보 */
+  }
+  
+  /* 모바일 입력창 */
+  .mobile-input-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    padding: 1rem;
+    z-index: 100;
+  }
+  
+  /* 모바일에서 텍스트 크기 조정 */
+  .mobile-text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+  
+  .mobile-text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+  
+  /* 모바일 터치 피드백 */
+  .mobile-touchable {
+    -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+    transition: background-color 0.2s ease;
+  }
+  
+  .mobile-touchable:active {
+    background-color: rgba(0,0,0,0.05);
+  }
+}
+
+/* PWA 설치 프롬프트 애니메이션 */
+.pwa-install-prompt {
+  animation: slideInFromTop 0.3s ease-out;
+}
+
+@keyframes slideInFromTop {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 오프라인 상태 표시 애니메이션 */
+.offline-banner {
+  animation: slideInFromTop 0.3s ease-out;
+}
+
+/* 모바일에서 오버레이 */
+.mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.mobile-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 모바일에서 스크롤바 숨기기 */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  
+  * {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* PWA 상태 표시 */
+.pwa-status {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.pwa-status.online {
+  background: #10b981;
+  color: white;
+}
+
+.pwa-status.offline {
+  background: #ef4444;
+  color: white;
+}
+
+/* 모바일 키보드 대응 */
+@media (max-width: 768px) {
+  .keyboard-adjust {
+    padding-bottom: env(keyboard-inset-height, 0px);
+  }
+  
+  /* 모바일에서 PWA 설치 프롬프트 위치 조정 */
+  .pwa-install-prompt {
+    top: 1rem;
+    right: 1rem;
+    left: 1rem;
+    max-width: none;
+  }
+  
+  /* 모바일에서 오프라인 배너 위치 조정 */
+  .offline-banner {
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 60;
+  }
+  
+  /* 모바일에서 메인 컨텐츠 패딩 조정 */
+  .main-content {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  
+  /* 모바일에서 버튼 간격 조정 */
+  .mobile-button-gap {
+    gap: 0.5rem;
+  }
+  
+  /* 모바일에서 텍스트 입력창 높이 조정 */
+  .mobile-textarea {
+    min-height: 2.5rem;
+    max-height: 6rem;
+  }
+  
+  /* 모바일에서 메시지 컨테이너 패딩 조정 */
+  .message-container {
+    padding: 0.75rem;
+  }
+  
+  /* 모바일에서 헤더 높이 조정 */
+  .header-mobile {
+    min-height: 3rem;
   }
 }
 

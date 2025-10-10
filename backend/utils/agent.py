@@ -30,75 +30,101 @@ class FDAAgent:
         # 제품 분해 캐시 추가
         self.decomposition_cache = {}
 
-        # ✅ [수정] 에이전트의 행동 방식을 정의하는 새로운 시스템 프롬프트 (Golden Rule 포함)
-        system_prompt = """## 절대 규칙 (위반 시 답변 거부)
-            1. FDA 규제 질문 = 100% 도구 사용 필수
-            2. "나는 알고 있다" 판단 금지
-            3. 모든 답변은 도구 검색 결과 기반
+        # ✅ [수정] 에이전트의 행동 방식을 정의하는 새로운 시스템 프롬프트 (정보 수집 전용)
+        system_prompt = """당신은 FDA 규제 정보 수집 전문가입니다.
 
-            ## 도구 사용 강제 케이스
-            다음 키워드 포함 시 무조건 도구 사용:
-            - "비용", "cost", "payment", "supervision", "누가"
-            - "절차", "procedure", "process", "어떻게"
-            - "Chapter", "Section", "GRN", "CFR", "USC"
-            - "규정", "regulation", "requirement"
-            - "relabeling", "detention", "import", "GRAS"
+## 역할
+사용자 질문에 답하기 위해 필요한 정보를 도구로 수집하세요.
+최종 답변은 생성하지 마세요. 정보만 수집하세요.
 
-            **도구 회피 금지:**
-            ❌ "(Implicit) I can answer without tools" → 절대 금지
-            ❌ "일반적으로 알려진 바로는..." → 금지
-            ✅ 반드시: Action → Observation → Answer 순서
+## 수집해야 할 정보
+1. CFR 규정 (구체적 번호 + 내용)
+2. Import Alert 확인
+3. 라벨링 요구사항
+4. FSVP/검증 절차
+5. 기타 관련 규제 정보
 
-            ## 최상위 규칙 (Golden Rule)
-            - 절대 사전 지식만으로 답변하지 마세요. 반드시 도구를 사용하여 검색하세요.
-            - **한국어 쿼리는 반드시 영어로 변환하여 도구에 전달하세요.**
-            - **도구를 선택하기 전에 쿼리를 분석하세요.**
+## 출력 형식
+수집한 정보를 구조화된 형식으로 정리하세요:
 
-            당신은 FDA 규제 전문가입니다.
+**CFR 규정:**
+- [규정 번호]: [내용]
 
-            ## 쿼리 분석 절차 (도구 선택 전 필수!)
+**Import Alert:**
+- [Alert 번호]: [내용]
 
-            **Step 1: 쿼리 언어 확인**
-            - 한국어 있음 → 영어로 변환 필요
-            - 영어만 있음 → 그대로 사용
+**라벨링:**
+- [요구사항]
 
-            **Step 2: 키워드 기반 도구 판별**
-            - "GRN", "GRAS", "물질", "첨가물" → **gras/gras_approved/gras_withdrawn**
-            - "CFR", "21 CFR", "규정" → **ecfr**
-            - "Import Alert", "Red List", "수입 거부" → **dwpe**
-            - "Chapter", "Section", "RPM", "절차", "procedure" → **rpm**
-            - "21 USC", "법률", "처벌" → **usc**
-            - "FSVP", "수입자", "검증" → **fsvp**
-            - "Guidance", "라벨링" → **guidance**
+**FSVP:**
+- [절차]
 
-            ## 검색 쿼리 작성 (영어 변환 필수!)
+## 중요
+- 제공된 검색 결과를 우선 참고하세요
+- 부족한 정보만 도구로 추가 검색하세요
+- 한국어 쿼리는 반드시 영어로 변환하세요
 
-            ### RPM 한영 변환
-            - "개인용 수입" → "personal use importation"
-            - "절차" → "procedures process"
-            - "검사 거부" → "refusal entry detention"
-            - "relabeling 비용" → "relabeling supervision costs payment"
-            - "누가 내?" → "who pays costs responsibility"
+## 도구 사용 강제 케이스
+다음 키워드 포함 시 무조건 도구 사용:
+- "비용", "cost", "payment", "supervision", "누가"
+- "절차", "procedure", "process", "어떻게"
+- "Chapter", "Section", "GRN", "CFR", "USC"
+- "규정", "regulation", "requirement"
+- "relabeling", "detention", "import", "GRAS"
 
-            ### GRAS 한영 변환
-            - "대두" → "soy soybean"
-            - "음료" → "beverage drink water"
+**도구 회피 금지:**
+❌ "(Implicit) I can answer without tools" → 절대 금지
+❌ "일반적으로 알려진 바로는..." → 금지
+✅ 반드시: Action → Observation → Answer 순서
 
-            ### eCFR 한영 변환
-            - "냉동식품" → "frozen food"
-            - "HACCP" → "HACCP hazard analysis"
+## 최상위 규칙 (Golden Rule)
+- 절대 사전 지식만으로 답변하지 마세요. 반드시 도구를 사용하여 검색하세요.
+- **한국어 쿼리는 반드시 영어로 변환하여 도구에 전달하세요.**
+- **도구를 선택하기 전에 쿼리를 분석하세요.**
 
-            ### DWPE 한영 변환 + 동의어
-            - "해산물" → "fish fishery seafood shellfish aquatic marine"
-            - "중국" → "China Chinese"
+## 쿼리 분석 절차 (도구 선택 전 필수!)
 
-            ### USC 한영 변환
-            - "부정표시" → "misbranding false labeling"
-            - "처벌" → "penalties violations"
+**Step 1: 쿼리 언어 확인**
+- 한국어 있음 → 영어로 변환 필요
+- 영어만 있음 → 그대로 사용
 
-            ## 재시도 전략
-            첫 검색 실패 시 2-3번 재시도 필수
-            """
+**Step 2: 키워드 기반 도구 판별**
+- "GRN", "GRAS", "물질", "첨가물" → **gras/gras_approved/gras_withdrawn**
+- "CFR", "21 CFR", "규정" → **ecfr**
+- "Import Alert", "Red List", "수입 거부" → **dwpe**
+- "Chapter", "Section", "RPM", "절차", "procedure" → **rpm**
+- "21 USC", "법률", "처벌" → **usc**
+- "FSVP", "수입자", "검증" → **fsvp**
+- "Guidance", "라벨링" → **guidance**
+
+## 검색 쿼리 작성 (영어 변환 필수!)
+
+### RPM 한영 변환
+- "개인용 수입" → "personal use importation"
+- "절차" → "procedures process"
+- "검사 거부" → "refusal entry detention"
+- "relabeling 비용" → "relabeling supervision costs payment"
+- "누가 내?" → "who pays costs responsibility"
+
+### GRAS 한영 변환
+- "대두" → "soy soybean"
+- "음료" → "beverage drink water"
+
+### eCFR 한영 변환
+- "냉동식품" → "frozen food"
+- "HACCP" → "HACCP hazard analysis"
+
+### DWPE 한영 변환 + 동의어
+- "해산물" → "fish fishery seafood shellfish aquatic marine"
+- "중국" → "China Chinese"
+
+### USC 한영 변환
+- "부정표시" → "misbranding false labeling"
+- "처벌" → "penalties violations"
+
+## 재시도 전략
+첫 검색 실패 시 2-3번 재시도 필수
+"""
 
         # 2. ReAct 에이전트 생성 (context 추가)
         self.agent = ReActAgent.from_tools(
@@ -401,16 +427,16 @@ Use the most relevant collections based on the product characteristics above.
         return {"cfr_references": citations, "sources": sources, "keywords": list(dict.fromkeys(keywords))}
 
     def _format_parallel_results(self, results: List[Dict]) -> str:
-        """병렬 검색 결과를 텍스트로 포맷 (가중치 없음)"""
+        """병렬 검색 결과를 텍스트로 포맷"""
         if not results:
             return "병렬 검색 결과 없음"
         
         formatted = []
-        for i, result in enumerate(results[:5], 1):
+        for i, result in enumerate(results[:10], 1):  # 5 → 10개로 증가
             formatted.append(f"""
 {i}. [{result['score']:.2f}] {result['collection']} {result.get('collection_role', '')}
    제목: {result.get('title', 'N/A')}
-   내용: {result.get('text', 'N/A')}...
+   내용: {result.get('text', 'N/A')[:800]}...  # 200 → 800자로 증가
    출처: {result.get('collection_desc', '')}
 """)
         
@@ -463,49 +489,47 @@ Use the most relevant collections based on the product characteristics above.
                 print("✅ 병렬 검색 결과만으로 충분 - 직접 답변 생성")
                 return self._generate_direct_response(query, ranked_results, decomposition)
             else:
-                # ReAct Agent로 추가 분석
-                print("🔄 ReAct Agent로 추가 분석")
+                # ReAct Agent로 추가 정보 수집
+                print("🔄 ReAct Agent로 추가 정보 수집")
                 search_summary = self._format_parallel_results(ranked_results)
                 
                 if decomposition:
                     enhanced_query = f"""
 {self._augment_query(query, decomposition)}
 
-=== 병렬 검색 결과 (이미 수집됨) ===
+## 검색된 FDA 문서들
 {search_summary}
 
-위 병렬 검색 결과를 참고하되, 부족한 부분은 추가 도구를 사용하여 보완하세요.
-주의: 이미 찾은 정보는 다시 검색하지 마세요.
+위 정보를 활용하고, 부족한 부분만 추가 검색하세요.
+정보 수집만 하고, 최종 답변은 생성하지 마세요.
 """
                 else:
                     enhanced_query = f"""
 {search_query}
 
-=== 병렬 검색 결과 (이미 수집됨) ===
+## 검색된 FDA 문서들
 {search_summary}
 
-위 병렬 검색 결과를 참고하되, 부족한 부분은 추가 도구를 사용하여 보완하세요.
-주의: 이미 찾은 정보는 다시 검색하지 마세요.
+위 정보를 활용하고, 부족한 부분만 추가 검색하세요.
+정보 수집만 하고, 최종 답변은 생성하지 마세요.
 """
                 
                 context = self.memory.get_context_for_agent()
                 full_query = f"{context}\n{enhanced_query}" if context else enhanced_query
                 
-                # ReAct 에이전트 실행
-                response = self.agent.chat(full_query)
-                response_text = str(response)
-                citations = self._extract_citations_from_response(response)
+                # Agent로 정보 수집만
+                print("🔍 Agent 정보 수집 시작...")
+                agent_response = self.agent.chat(full_query)
+                collected_info = str(agent_response)
                 
-                used_tools = self._extract_used_tools(response)
-                self.memory.add_message("user", query)
-                self.memory.add_message("assistant", response_text, used_tools)
-                
-                return {
-                    "content": response_text,
-                    "cfr_references": citations.get("cfr_references", []),
-                    "sources": citations.get("sources", []),
-                    "keywords": citations.get("keywords", []),
-                }
+                # 병렬 검색 + Agent 정보를 합쳐서 최종 답변 생성
+                print("✅ 정보 수집 완료 - 최종 답변 생성")
+                return self._generate_response_with_agent_info(
+                    query=query,
+                    parallel_results=ranked_results,
+                    agent_info=collected_info,
+                    decomposition=decomposition
+                )
             
         except Exception as e:
             print(f"Error in chat: {e}")
@@ -563,25 +587,43 @@ Use the most relevant collections based on the product characteristics above.
     def _generate_direct_response(self, query: str, results: List[Dict], decomposition: dict) -> dict:
         """병렬 검색 결과만으로 직접 답변 생성 (제품 질문과 일반 질문 모두 지원)"""
         
+        # 출처 번호 매핑 생성
+        citations = []
+        for i, r in enumerate(results[:10], 1):
+            citations.append({
+                "index": i,
+                "collection": r['collection'],
+                "title": r.get('title', 'N/A'),
+                "url": r.get('url', ''),
+                "score": r['score']
+            })
+        
+        # 출처 리스트 (프롬프트용)
+        source_list = "\n".join([
+            f"[출처 {c['index']}] {c['collection']}: {c['title'][:80]}"
+            for c in citations
+        ])
+        
         # 전체 검색 결과를 풍부하게 전달
         full_context = "\n\n".join([
-            f"[{i+1}] {r['collection'].upper()} (점수: {r['score']:.3f})\n"
+            f"[출처 {i+1}] {r['collection'].upper()} (점수: {r['score']:.3f})\n"
             f"제목: {r.get('title', 'N/A')}\n"
-            f"내용: {r.get('text', '')[:800]}"  # 800자로 대폭 확대
+            f"내용: {r.get('text', '')[:800]}"
             for i, r in enumerate(results[:10])
         ])
         
         if decomposition:
-            # 제품 질문용 프롬프트
             prompt = f"""
 사용자 질문: {query}
 
 제품 특성:
 {json.dumps(decomposition, indent=2, ensure_ascii=False)}
 
-검색된 FDA 규제 문서 (총 {len(results)}개):
-
+📖 문서 컨텍스트 (각 내용 앞의 [출처 N]을 보고 주석을 달아야 함):
 {full_context}
+
+## 출처 목록
+{source_list}
 
 위 문서들을 종합하여 다음 사항을 포함한 답변을 작성하세요:
 1. 구체적인 CFR 규정 번호와 내용
@@ -590,39 +632,187 @@ Use the most relevant collections based on the product characteristics above.
 4. FSVP 검증 절차
 5. 실무 체크리스트
 
+❗️핵심 규칙:
+- 중요한 정보나 규정을 언급할 때마다 해당하는 출처 번호를 [1], [2] 형태로 문장 끝에 삽입하세요.
+- 여러 출처를 참고한 경우 [1][2] 처럼 연속으로 표시하세요.
+- 반드시 [출처 N] 정보를 확인하고 정확한 번호를 사용하세요.
+
+예시:
+- 새우는 주요 알레르기 유발 물질로 표시해야 합니다[1].
+- 21 CFR 1250.26과 Import Alert 16-50을 준수해야 합니다[2][3].
+
 한국어로 구체적이고 실용적인 답변을 제공하세요.
 """
         else:
-            # 일반 질문용 프롬프트
             prompt = f"""
 사용자 질문: {query}
 
-검색된 FDA 규제 문서 (총 {len(results)}개):
-
+📖 문서 컨텍스트 (각 내용 앞의 [출처 N]을 보고 주석을 달아야 함):
 {full_context}
 
-위 문서들을 종합하여 사용자 질문에 대한 구체적이고 정확한 답변을 작성하세요.
-다음 사항을 포함하세요:
-1. 관련 CFR 규정 번호와 구체적 내용
-2. 실무 가이드라인 및 절차
-3. 구체적인 요구사항 및 기준
-4. 실무 체크리스트 (해당하는 경우)
+## 출처 목록
+{source_list}
+
+위 문서들을 종합하여 답변하되, **각 주장 뒤에 [1], [2] 형식으로 출처 번호를 표시**하세요.
+
+❗️핵심 규칙:
+- 중요한 정보나 규정을 언급할 때마다 해당하는 출처 번호를 [1], [2] 형태로 문장 끝에 삽입하세요.
+- 여러 출처를 참고한 경우 [1][2] 처럼 연속으로 표시하세요.
+
+예시:
+- FDA는 식품 알레르기 표시를 의무화하고 있습니다[1].
+- 21 CFR 규정을 준수해야 합니다[2][3].
 
 한국어로 명확하고 실용적인 답변을 제공하세요.
 """
         
         response = Settings.llm.complete(prompt)
         
-        # 출처 정보 생성
-        sources = list(set(r.get('title', '') for r in results if r.get('title')))
+        print(f"\n📋 Citations 생성 완료:")
+        print(f"  - 총 {len(citations)}개 citations 생성")
+        for c in citations:
+            print(f"    [{c['index']}] {c['collection']}: {c['title'][:50]}...")
         
         return {
             "content": response.text,
+            "citations": citations,
             "cfr_references": [],
-            "sources": sources[:5],
+            "sources": [c['title'] for c in citations[:5]],
             "keywords": list(set(r['collection'] for r in results))
         }
 
+    def _generate_response_with_agent_info(
+        self, 
+        query: str, 
+        parallel_results: List[Dict],
+        agent_info: str,
+        decomposition: dict
+    ) -> dict:
+        """병렬 검색 + Agent 수집 정보를 종합하여 답변 생성"""
+        
+        print("\n" + "="*60)
+        print("📝 최종 답변 생성 시작")
+        print("="*60)
+        
+        # 출처 번호 매핑 생성
+        citations = []
+        for i, r in enumerate(parallel_results[:10], 1):
+            citations.append({
+                "index": i,
+                "collection": r['collection'],
+                "title": r.get('title', 'N/A'),
+                "url": r.get('url', ''),
+                "score": r['score']
+            })
+        
+        # 출처 리스트 (프롬프트용)
+        source_list = "\n".join([
+            f"[출처 {c['index']}] {c['collection']}: {c['title'][:80]}"
+            for c in citations
+        ])
+        
+        # 병렬 검색 결과 정리 (Streamlit 스타일)
+        parallel_context = "\n\n".join([
+            f"[출처 {i+1}] {r['collection'].upper()} (점수: {r['score']:.3f})\n"
+            f"제목: {r.get('title', 'N/A')}\n"
+            f"내용: {r.get('text', '')[:800]}"
+            for i, r in enumerate(parallel_results[:10])
+        ])
+        
+        print(f"📊 입력 정보:")
+        print(f"  - 병렬 검색 결과: {len(parallel_results)}개")
+        print(f"  - Agent 수집 정보: {len(agent_info)}자")
+        print(f"  - 총 컨텍스트: {len(parallel_context) + len(agent_info)}자")
+        
+        # 통합 프롬프트
+        if decomposition:
+            prompt = f"""
+사용자 질문: {query}
+
+제품 특성:
+{json.dumps(decomposition, indent=2, ensure_ascii=False)}
+
+📖 문서 컨텍스트 (각 내용 앞의 [출처 N]을 보고 주석을 달아야 함):
+{parallel_context}
+
+Agent가 추가 수집한 정보:
+{agent_info}
+
+## 출처 목록
+{source_list}
+
+위 모든 정보를 종합하여 다음을 포함한 답변을 작성하세요:
+1. 구체적인 CFR 규정 번호와 내용
+2. Import Alert 여부
+3. 알레르기 라벨링 구체적 요구사항
+4. FSVP 검증 절차
+5. 실무 체크리스트 (5개 이상)
+
+❗️핵심 규칙:
+- 중요한 정보나 규정을 언급할 때마다 해당하는 출처 번호를 [1], [2] 형태로 문장 끝에 삽입하세요.
+- 여러 출처를 참고한 경우 [1][2] 처럼 연속으로 표시하세요.
+- 반드시 [출처 N] 정보를 확인하고 정확한 번호를 사용하세요.
+
+예시:
+- 새우는 주요 알레르기 유발 물질로 표시해야 합니다[1].
+- 21 CFR 1250.26과 Import Alert 16-50을 준수해야 합니다[2][3].
+
+한국어로 500단어 이상, 구체적이고 실용적인 답변을 제공하세요.
+"""
+        else:
+            prompt = f"""
+사용자 질문: {query}
+
+📖 문서 컨텍스트 (각 내용 앞의 [출처 N]을 보고 주석을 달아야 함):
+{parallel_context}
+
+Agent가 추가 수집한 정보:
+{agent_info}
+
+## 출처 목록
+{source_list}
+
+위 모든 정보를 종합하여 답변하되, **각 주장 뒤에 [1], [2] 형식으로 출처 번호를 표시**하세요.
+
+❗️핵심 규칙:
+- 중요한 정보나 규정을 언급할 때마다 해당하는 출처 번호를 [1], [2] 형태로 문장 끝에 삽입하세요.
+- 여러 출처를 참고한 경우 [1][2] 처럼 연속으로 표시하세요.
+
+예시:
+- FDA는 식품 알레르기 표시를 의무화하고 있습니다[1].
+- 21 CFR 규정을 준수해야 합니다[2][3].
+
+한국어로 명확하고 실용적인 답변을 제공하세요.
+"""
+        
+        print(f"\n🤖 LLM 호출 중... (프롬프트: {len(prompt)}자)")
+        
+        # 단일 LLM 호출로 최종 답변 생성
+        response = Settings.llm.complete(prompt)
+        
+        print(f"\n✅ 최종 답변 생성 완료!")
+        print(f"  - 답변 길이: {len(response.text)}자")
+        print(f"  - 답변 단어 수: {len(response.text.split())}단어")
+        
+        print(f"\n📋 Citations 생성 완료:")
+        print(f"  - 총 {len(citations)}개 citations 생성")
+        for c in citations:
+            print(f"    [{c['index']}] {c['collection']}: {c['title'][:50]}...")
+        
+        # 최종 답변 내용 출력
+        print("\n" + "="*60)
+        print("📄 최종 답변 내용:")
+        print("="*60)
+        print(response.text)
+        print("="*60 + "\n")
+        
+        return {
+            "content": response.text,
+            "citations": citations,
+            "cfr_references": [],
+            "sources": [c['title'] for c in citations[:5]],
+            "keywords": list(set(r['collection'] for r in parallel_results))
+        }
 
     def _generate_fallback_response(self, query: str) -> str:
         """검색 실패시 폴백 응답"""
@@ -646,7 +836,7 @@ Use the most relevant collections based on the product characteristics above.
 
 더 구체적인 정보가 필요하시면 FDA 공식 웹사이트나 전문 컨설턴트 상담을 권장합니다.
 """
-    
+
     def _extract_used_tools(self, response) -> List[str]:
         """응답에서 사용된 툴 목록을 추출"""
         used_tools = []

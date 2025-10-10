@@ -46,6 +46,7 @@ class ChatResponse(BaseModel):
     keywords: List[str] = []
     cfr_references: List[Dict] = []
     sources: List[str] = []
+    citations: List[Dict] = []  # ← 이 줄 추가!
     # 시간 정보
     responseTime: float = 0
     agentResponseTime: float = 0
@@ -130,6 +131,7 @@ async def chat(request: ChatRequest):
             keywords=keywords,
             cfr_references=cfr_references,
             sources=sources,
+            citations=agent_response.get("citations", []),  # ← 이 줄 추가!
             responseTime=total_response_time,
             agentResponseTime=agent_response_time,
             timestamp=datetime.now().isoformat(),
@@ -177,3 +179,7 @@ async def reset_project_conversation(project_id: int):
         project_agents[project_id] = FDAAgent()
         logger.info(f"프로젝트 {project_id} 새 에이전트 생성")
         return {"message": "새로운 대화가 시작되었습니다."}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

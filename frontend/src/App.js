@@ -8,7 +8,10 @@ import { Lightbulb } from 'lucide-react';
 import './App.css';
 
 const FDAChatbot = () => {
-  
+  // PWA 상태 관리
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
   
   const [projects, setProjects] = useState([]);
 
@@ -28,6 +31,42 @@ const FDAChatbot = () => {
 
   const currentProject = projects.find(p => p.active);
   
+  // PWA Service Worker 등록 및 설치 프롬프트 처리
+  useEffect(() => {
+    // Service Worker 등록
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(registration => {
+          console.log('Service Worker registered successfully:', registration);
+        })
+        .catch(error => {
+          console.log('Service Worker registration failed:', error);
+        });
+    }
+
+    // 설치 프롬프트 이벤트 리스너
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallPrompt(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    // 온라인/오프라인 상태 감지
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   // 프로젝트가 변경될 때마다 메시지 로드
   useEffect(() => {
     if (currentProject) {
@@ -60,6 +99,30 @@ const FDAChatbot = () => {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
+  };
+
+  // PWA 설치 함수
+  const handleInstallApp = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`PWA 설치 결과: ${outcome}`);
+      setDeferredPrompt(null);
+      setShowInstallPrompt(false);
+    }
+  };
+
+  // 오프라인 상태에서 메시지 전송 시 처리
+  const handleOfflineMessage = () => {
+    const offlineMessage = {
+      id: Date.now(),
+      type: 'assistant',
+      content: '현재 오프라인 상태입니다. 네트워크 연결을 확인해주세요.',
+      timestamp: new Date().toISOString(),
+      offline: true,
+      citations: []  // ← 이 줄 추가!
+    };
+    setMessages(prev => [...prev, offlineMessage]);
   };
 
   const createNewProject = () => {
@@ -118,7 +181,24 @@ const FDAChatbot = () => {
   // API 호출 함수
   const callChatAPI = async (message, projectId) => {
     try {
-      const apiUrl = `${process.env.REACT_APP_API_URL}/api/chat`;
+      // 모바일에서도 접속 가능하도록 IP 주소 사용
+      const getApiUrl = () => {
+        if (process.env.REACT_APP_API_URL) {
+          return process.env.REACT_APP_API_URL;
+        }
+        
+        // 모바일에서 접속할 때는 컴퓨터의 IP 주소 사용
+        const hostname = window.location.hostname;
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+          return 'http://localhost:8000';
+        } else {
+          // 모바일에서 접속할 때는 같은 IP 주소의 8000 포트 사용
+          return `http://${hostname}:8000`;
+        }
+      };
+      
+      const apiUrl = `${getApiUrl()}/api/chat`;
+      console.log('API URL:', apiUrl); // 디버깅용
 
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -138,6 +218,8 @@ const FDAChatbot = () => {
       }
 
       const data = await response.json();
+      console.log('API Response:', data); // 디버깅용 - API 응답 전체 로그
+      console.log('Citations:', data.citations); // 디버깅용 - citations만 로그
       return data;
     } catch (error) {
       console.error('API 호출 오류:', error);
@@ -153,6 +235,12 @@ const FDAChatbot = () => {
   const sendMessage = async () => {
     const message = inputMessage.trim();
     if (!message) return;
+
+    // 오프라인 상태 체크
+    if (!isOnline) {
+      handleOfflineMessage();
+      return;
+    }
 
     // 프로젝트가 없으면 자동으로 생성
     let activeProject = currentProject;
@@ -212,10 +300,14 @@ const FDAChatbot = () => {
         keywords: apiResponse.keywords || [],
         cfr_references: apiResponse.cfr_references || [],
         sources: apiResponse.sources || [],
+        citations: apiResponse.citations || [],  // ← 이 줄 추가!
         responseTime: apiResponse.responseTime || elapsedTime,
         agentResponseTime: apiResponse.agentResponseTime,
         timestamp: apiResponse.timestamp
       };
+      
+      console.log('Bot Message:', botMessage); // 디버깅용 - 메시지 객체 로그
+      console.log('Bot Message Citations:', botMessage.citations); // 디버깅용 - citations만 로그
       
       const finalMessages = [...updatedMessages, botMessage];
       setMessages(finalMessages);
@@ -235,6 +327,7 @@ const FDAChatbot = () => {
         content: '죄송합니다. 응답을 생성하는데 문제가 발생했습니다.',
         keywords: [],
         cfr_references: [],
+        citations: [],  // ← 이 줄 추가!
         responseTime: elapsedTime
       };
       const finalMessages = [...updatedMessages, errorMessage];
@@ -311,7 +404,8 @@ const FDAChatbot = () => {
               title: '문서 분석 결과',
               description: '해당 인증서는 FDA 요구사항에 부합하는지 검토했습니다. 파일 분석 기능은 현재 개발 중입니다.'
             }
-          ]
+          ],
+          citations: []  // ← 이 줄 추가!
         };
         const finalMessages = [...updatedMessages, analysisMessage];
         setMessages(finalMessages);
@@ -377,32 +471,32 @@ const FDAChatbot = () => {
       return (
         <>
         {/* 헤더 */}
-        <div className="p-6 border-b border-gray-200 bg-white/80">
-          <div className="flex justify-between items-center">
+        <div className="p-3 lg:p-6 border-b border-purple-100 bg-purple-50/30">
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3">
             <div className="flex items-center gap-3">
-            <p className="text-sm text-gray-600 leading-relaxed">
-                  FDA 공식 문서를 바탕으로 정확한 정보를 제공합니다.
-                </p>
+              <p className="text-xs lg:text-sm text-gray-600 leading-relaxed">
+                FDA 공식 문서를 바탕으로 정확한 정보를 제공합니다.
+              </p>
             </div>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowHelpModal(true)}
-                className="flex items-center gap-2 bg-yellow-50 hover:bg-yellow-100 text-yellow-700 px-4 py-2 rounded-lg border border-yellow-200 hover:border-yellow-300 transition-colors"
+                className="flex items-center gap-2 bg-yellow-50 hover:bg-yellow-100 text-yellow-700 px-3 lg:px-4 py-2 rounded-lg border border-yellow-200 hover:border-yellow-300 transition-colors"
               >
                 <Lightbulb className="w-4 h-4" />
-                <span className="text-sm font-medium">질문이 어려우신가요? 도움말 보기</span>
+                <span className="text-xs lg:text-sm font-medium">질문이 어려우신가요? 도움말 보기</span>
               </button>
             </div>
           </div>
         </div>
 
           {/* 중앙 환영 영역 */}
-          <div className="flex-1 flex items-center justify-center p-6">
+          <div className="flex-1 flex items-center justify-center p-3 lg:p-6">
             <div className="text-center max-w-2xl mx-auto">
-              <h2 className="text-3xl font-bold text-gray-800 mb-4">
+              <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-3 lg:mb-4">
                 {getGreeting()}
               </h2>
-              <p className="text-gray-600 text-lg mb-8">FDA 식품 수출 규제에 대해 무엇이든 물어보세요</p>
+              <p className="text-gray-600 text-base lg:text-lg mb-6 lg:mb-8">FDA 식품 수출 규제에 대해 무엇이든 물어보세요</p>
               
               {/* 중앙 입력창 */}
               <div className="max-w-2xl mx-auto">
@@ -431,12 +525,12 @@ const FDAChatbot = () => {
     return (
       <>
         {/* 헤더 */}
-        <div className="p-6 border-b border-gray-200 bg-white/80">
-          <div className="flex justify-between items-center">
+        <div className="p-3 lg:p-6 border-b border-purple-100 bg-purple-50/30">
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3">
             <div className="flex items-center gap-3">
               {currentProject ? (
                 <div className="flex items-center gap-2">
-                  <h1 className="text-xl font-semibold text-gray-800">{currentProject.name}</h1>
+                  <h1 className="text-lg lg:text-xl font-semibold text-gray-800">{currentProject.name}</h1>
                   <button
                     onClick={() => {
                       const newName = prompt('프로젝트 이름을 변경하세요:', currentProject.name);
@@ -454,16 +548,16 @@ const FDAChatbot = () => {
                   </button>
                 </div>
               ) : (
-                <h1 className="text-xl font-semibold text-gray-800">FDA Export Assistant</h1>
+                <h1 className="text-lg lg:text-xl font-semibold text-gray-800">FDA Export Assistant</h1>
               )}
             </div>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setShowHelpModal(true)}
-                className="flex items-center gap-2 bg-yellow-50 hover:bg-yellow-100 text-yellow-700 px-4 py-2 rounded-lg border border-yellow-200 hover:border-yellow-300 transition-colors"
+                className="flex items-center gap-2 bg-yellow-50 hover:bg-yellow-100 text-yellow-700 px-3 lg:px-4 py-2 rounded-lg border border-yellow-200 hover:border-yellow-300 transition-colors"
               >
                 <Lightbulb className="w-4 h-4" />
-                <span className="text-sm font-medium">질문이 어려우신가요? 도움말 보기</span>
+                <span className="text-xs lg:text-sm font-medium">질문이 어려우신가요? 도움말 보기</span>
               </button>
               {currentProject && (
                 <button
@@ -553,7 +647,45 @@ const FDAChatbot = () => {
   
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-indigo-50 via-gray-50 to-indigo-50">
+    <div className="flex h-screen bg-gradient-to-br from-purple-50/30 via-purple-50/20 to-purple-50/40">
+      {/* 오프라인 상태 표시 */}
+      {!isOnline && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-red-500 text-white text-center py-2 text-sm">
+          📱 오프라인 상태입니다. 일부 기능이 제한될 수 있습니다.
+        </div>
+      )}
+
+      {/* PWA 설치 프롬프트 */}
+      {showInstallPrompt && (
+        <div className="fixed top-4 right-4 z-50 bg-white border border-gray-200 rounded-lg shadow-lg p-4 max-w-sm">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0">
+              <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
+                📱
+              </div>
+            </div>
+            <div className="flex-1">
+              <h3 className="font-medium text-gray-900 text-sm">앱으로 설치하기</h3>
+              <p className="text-gray-600 text-xs mt-1">홈 화면에 추가하여 더 편리하게 사용하세요.</p>
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={handleInstallApp}
+                  className="bg-indigo-500 text-white px-3 py-1 rounded text-xs hover:bg-indigo-600 transition-colors"
+                >
+                  설치
+                </button>
+                <button
+                  onClick={() => setShowInstallPrompt(false)}
+                  className="text-gray-500 px-3 py-1 rounded text-xs hover:bg-gray-100 transition-colors"
+                >
+                  나중에
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* 사이드바 */}
       <Sidebar
         projects={projects}
@@ -562,9 +694,9 @@ const FDAChatbot = () => {
         onDeleteProject={deleteProject}
       />
 
-      {/* 메인 컨텐츠 - 가운데 정렬 */}
-      <div className="flex-1 flex justify-center">
-        <div className="w-full max-w-4xl flex flex-col bg-white/95 backdrop-blur-sm">
+      {/* 메인 컨텐츠 - 모바일 최적화 */}
+      <div className="flex-1 flex justify-center lg:ml-0 ml-0">
+        <div className="w-full max-w-4xl flex flex-col bg-purple-50/20 backdrop-blur-sm">
           {renderChatContent()}
         </div>
       </div>

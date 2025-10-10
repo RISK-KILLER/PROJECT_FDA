@@ -1,0 +1,19 @@
+<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+  <!-- 배경 원 -->
+  <circle cx="96" cy="96" r="90" fill="#4f46e5" stroke="#3730a3" stroke-width="4"/>
+  
+  <!-- FDA 텍스트 -->
+  <text x="96" y="70" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="white">FDA</text>
+  
+  <!-- Assistant 아이콘 (채팅 버블) -->
+  <circle cx="96" cy="120" r="15" fill="white" opacity="0.9"/>
+  <circle cx="96" cy="120" r="10" fill="#4f46e5"/>
+  
+  <!-- 채팅 점들 -->
+  <circle cx="90" cy="120" r="1.5" fill="white"/>
+  <circle cx="96" cy="120" r="1.5" fill="white"/>
+  <circle cx="102" cy="120" r="1.5" fill="white"/>
+  
+  <!-- 하단 텍스트 -->
+  <text x="96" y="150" font-family="Arial, sans-serif" font-size="10" text-anchor="middle" fill="white" opacity="0.8">Assistant</text>
+</svg>
