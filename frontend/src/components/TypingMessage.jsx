@@ -1,4 +1,6 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import useTypingEffect from '../hooks/useTypingEffect';
 import TermTooltip from './TermTooltip';
 import CitationLink from './CitationLink';
@@ -31,6 +33,19 @@ const TypingMessage = ({ message, speed = 15, citations }) => {
     });
   };
   
+  // 마크다운 문법을 파싱하는 함수
+  const parseMarkdown = (text) => {
+    if (!text) return text;
+    
+    // 굵은 글씨 처리: **텍스트** -> <strong>텍스트</strong>
+    let processedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // 기울임 처리: *텍스트* -> <em>텍스트</em>
+    processedText = processedText.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    
+    return processedText;
+  };
+
   return (
     <div className="whitespace-pre-wrap">
       {(() => {
@@ -42,10 +57,11 @@ const TypingMessage = ({ message, speed = 15, citations }) => {
 
         while ((match = citationRegex.exec(displayText)) !== null) {
           if (match.index > lastIndex) {
+            const textPart = displayText.substring(lastIndex, match.index);
+            // 마크다운 파싱 후 FDA 용어 처리
+            const markdownParsed = parseMarkdown(textPart);
             parts.push(
-              <span key={`text-${key++}`}>
-                {displayText.substring(lastIndex, match.index)}
-              </span>
+              <span key={`text-${key++}`} dangerouslySetInnerHTML={{ __html: markdownParsed }} />
             );
           }
 
@@ -65,10 +81,11 @@ const TypingMessage = ({ message, speed = 15, citations }) => {
         }
 
         if (lastIndex < displayText.length) {
+          const textPart = displayText.substring(lastIndex);
+          // 마크다운 파싱 후 FDA 용어 처리
+          const markdownParsed = parseMarkdown(textPart);
           parts.push(
-            <span key={`text-${key++}`}>
-              {displayText.substring(lastIndex)}
-            </span>
+            <span key={`text-${key++}`} dangerouslySetInnerHTML={{ __html: markdownParsed }} />
           );
         }
 

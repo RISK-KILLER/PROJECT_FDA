@@ -1,4 +1,6 @@
 import React, { memo } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { MessageCircle, FileText, Download, Clock } from 'lucide-react';
 import PromptChips from './PromptChips';
 import ScenarioCards from './ScenarioCards';
@@ -40,6 +42,19 @@ const MessageList = ({ messages, isTyping, elapsedTime, onGenerateChecklist, onD
     });
   };
 
+  // 마크다운 문법을 파싱하는 함수
+  const parseMarkdown = (text) => {
+    if (!text) return text;
+    
+    // 굵은 글씨 처리: **텍스트** -> <strong>텍스트</strong>
+    let processedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // 기울임 처리: *텍스트* -> <em>텍스트</em>
+    processedText = processedText.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    
+    return processedText;
+  };
+
   // 메시지 내용에서 [1], [2] 같은 citation을 찾아서 링크로 변환
   const renderContentWithCitations = (content, citations) => {
     if (!content) return content;
@@ -54,10 +69,10 @@ const MessageList = ({ messages, isTyping, elapsedTime, onGenerateChecklist, onD
       // Citation 이전 텍스트
       if (match.index > lastIndex) {
         const textPart = content.substring(lastIndex, match.index);
+        // 마크다운 파싱 후 FDA 용어 처리
+        const markdownParsed = parseMarkdown(textPart);
         parts.push(
-          <span key={`text-${key++}`}>
-            {renderTextWithTerms(textPart)}
-          </span>
+          <span key={`text-${key++}`} dangerouslySetInnerHTML={{ __html: markdownParsed }} />
         );
       }
 
@@ -80,10 +95,10 @@ const MessageList = ({ messages, isTyping, elapsedTime, onGenerateChecklist, onD
     // 남은 텍스트
     if (lastIndex < content.length) {
       const textPart = content.substring(lastIndex);
+      // 마크다운 파싱 후 FDA 용어 처리
+      const markdownParsed = parseMarkdown(textPart);
       parts.push(
-        <span key={`text-${key++}`}>
-          {renderTextWithTerms(textPart)}
-        </span>
+        <span key={`text-${key++}`} dangerouslySetInnerHTML={{ __html: markdownParsed }} />
       );
     }
 
@@ -91,17 +106,17 @@ const MessageList = ({ messages, isTyping, elapsedTime, onGenerateChecklist, onD
   };
 
   return (
-    <div className="flex-1 p-6 overflow-y-auto space-y-6">
+    <div className="flex-1 p-2 lg:p-4 overflow-y-auto space-y-6">
       {messages.map(message => (
         <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-          <div className={`max-w-[70%] rounded-2xl px-6 py-4 ${
+          <div className={`${message.type === 'user' ? 'max-w-[85%]' : 'w-full'} rounded-2xl px-6 py-4 ${
             message.type === 'user'
               ? 'bg-gradient-to-r from-indigo-500 to-indigo-600 text-white rounded-br-md'
               : 'bg-purple-50/40 border border-purple-100 rounded-bl-md'
           }`}>
             {message.type === 'bot' ? (
               <>
-                <TypingMessage message={message} speed={15} citations={message.citations} />
+                <TypingMessage message={message} speed={8} citations={message.citations} />
                 
                 {/* Citations 목록 추가 */}
                 {message.citations && message.citations.length > 0 && (
@@ -149,7 +164,7 @@ const MessageList = ({ messages, isTyping, elapsedTime, onGenerateChecklist, onD
       {/* 실시간 타이머 로딩 */}
       {isTyping && (
         <div className="flex justify-start">
-          <div className="bg-purple-50/40 border border-purple-100 rounded-2xl rounded-bl-md px-6 py-4 max-w-[70%]">
+          <div className="bg-purple-50/40 border border-purple-100 rounded-2xl rounded-bl-md px-6 py-4 w-fit">
             <div className="flex items-center gap-2 mb-3">
               <MessageCircle className="w-4 h-4 text-gray-500" />
               <span className="text-gray-500 italic">AI가 응답을 생성중입니다...</span>

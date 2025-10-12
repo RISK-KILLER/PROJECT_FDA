@@ -590,11 +590,33 @@ Use the most relevant collections based on the product characteristics above.
         # 출처 번호 매핑 생성
         citations = []
         for i, r in enumerate(results[:10], 1):
+            # 제목이 비어있거나 None인 경우 기본값 설정
+            title = r.get('title', '').strip()
+            if not title:
+                title = f"{r['collection'].upper()} Document {i}"
+            
+            # URL이 비어있는 경우 기본 URL 생성
+            url = r.get('url', '').strip()
+            if not url:
+                # 컬렉션별 기본 URL 생성
+                if r['collection'] == 'fsvp':
+                    url = f"https://www.fda.gov/food/importing-food-products-united-states/foreign-suppliers-verification-programs-fsvp-importer-portal-records-submission"
+                elif r['collection'] == 'gras':
+                    url = f"https://www.hfpappexternal.fda.gov/scripts/fdcc/index.cfm?set=GRASNotices"
+                elif r['collection'] == 'ecfr':
+                    url = f"https://www.ecfr.gov/current/title-21"
+                elif r['collection'] == 'guidance':
+                    url = f"https://www.fda.gov/regulatory-information/search-fda-guidance-documents"
+                elif r['collection'] == 'dwpe':
+                    url = f"https://www.accessdata.fda.gov/cms_ia/country_KR.html"
+                elif r['collection'] == 'usc':
+                    url = f"https://www.law.cornell.edu/uscode/text/21"
+            
             citations.append({
                 "index": i,
                 "collection": r['collection'],
-                "title": r.get('title', 'N/A'),
-                "url": r.get('url', ''),
+                "title": title,
+                "url": url,
                 "score": r['score']
             })
         
@@ -697,11 +719,33 @@ Use the most relevant collections based on the product characteristics above.
         # 출처 번호 매핑 생성
         citations = []
         for i, r in enumerate(parallel_results[:10], 1):
+            # 제목이 비어있거나 None인 경우 기본값 설정
+            title = r.get('title', '').strip()
+            if not title:
+                title = f"{r['collection'].upper()} Document {i}"
+            
+            # URL이 비어있는 경우 기본 URL 생성
+            url = r.get('url', '').strip()
+            if not url:
+                # 컬렉션별 기본 URL 생성
+                if r['collection'] == 'fsvp':
+                    url = f"https://www.fda.gov/food/importing-food-products-united-states/foreign-suppliers-verification-programs-fsvp-importer-portal-records-submission"
+                elif r['collection'] == 'gras':
+                    url = f"https://www.hfpappexternal.fda.gov/scripts/fdcc/index.cfm?set=GRASNotices"
+                elif r['collection'] == 'ecfr':
+                    url = f"https://www.ecfr.gov/current/title-21"
+                elif r['collection'] == 'guidance':
+                    url = f"https://www.fda.gov/regulatory-information/search-fda-guidance-documents"
+                elif r['collection'] == 'dwpe':
+                    url = f"https://www.fda.gov/import-alerts"
+                elif r['collection'] == 'usc':
+                    url = f"https://www.law.cornell.edu/uscode/text/21"
+            
             citations.append({
                 "index": i,
                 "collection": r['collection'],
-                "title": r.get('title', 'N/A'),
-                "url": r.get('url', ''),
+                "title": title,
+                "url": url,
                 "score": r['score']
             })
         

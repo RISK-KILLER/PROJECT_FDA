@@ -398,7 +398,7 @@ const FDAChatbot = () => {
         const analysisMessage = {
           id: Date.now() + Math.random(),
           type: 'bot',
-          content: `업로드해주신 "${file.name}" 문서를 분석했습니다:`,
+          content: `현재는 텍스트 질문만 지원하며, 파일 분석 기능은 준비 중입니다.`,
           cfr_references: [
             {
               title: '문서 분석 결과',
@@ -471,7 +471,7 @@ const FDAChatbot = () => {
       return (
         <>
         {/* 헤더 */}
-        <div className="p-3 lg:p-6 border-b border-purple-100 bg-purple-50/30">
+        <div className="p-2 lg:p-4 border-b border-purple-100 bg-purple-50/30">
           <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3">
             <div className="flex items-center gap-3">
               <p className="text-xs lg:text-sm text-gray-600 leading-relaxed">
@@ -492,14 +492,14 @@ const FDAChatbot = () => {
 
           {/* 중앙 환영 영역 */}
           <div className="flex-1 flex items-center justify-center p-3 lg:p-6">
-            <div className="text-center max-w-2xl mx-auto">
+            <div className="text-center w-full">
               <h2 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-3 lg:mb-4">
                 {getGreeting()}
               </h2>
               <p className="text-gray-600 text-base lg:text-lg mb-6 lg:mb-8">FDA 식품 수출 규제에 대해 무엇이든 물어보세요</p>
               
               {/* 중앙 입력창 */}
-              <div className="max-w-2xl mx-auto">
+              <div className="max-w-3xl mx-auto">
                 <InputBar
                   inputMessage={inputMessage}
                   setInputMessage={setInputMessage}
@@ -525,7 +525,7 @@ const FDAChatbot = () => {
     return (
       <>
         {/* 헤더 */}
-        <div className="p-3 lg:p-6 border-b border-purple-100 bg-purple-50/30">
+        <div className="p-2 lg:p-4 border-b border-purple-100 bg-purple-50/30">
           <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-3">
             <div className="flex items-center gap-3">
               {currentProject ? (
@@ -647,7 +647,7 @@ const FDAChatbot = () => {
   
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-purple-50/30 via-purple-50/20 to-purple-50/40">
+    <div className="flex h-screen bg-gray-100">
       {/* 오프라인 상태 표시 */}
       {!isOnline && (
         <div className="fixed top-0 left-0 right-0 z-50 bg-red-500 text-white text-center py-2 text-sm">
@@ -694,9 +694,9 @@ const FDAChatbot = () => {
         onDeleteProject={deleteProject}
       />
 
-      {/* 메인 컨텐츠 - 모바일 최적화 */}
+      {/* 메인 컨텐츠 - 넓은 레이아웃 */}
       <div className="flex-1 flex justify-center lg:ml-0 ml-0">
-        <div className="w-full max-w-4xl flex flex-col bg-purple-50/20 backdrop-blur-sm">
+        <div className="w-full max-w-5xl flex flex-col bg-white">
           {renderChatContent()}
         </div>
       </div>

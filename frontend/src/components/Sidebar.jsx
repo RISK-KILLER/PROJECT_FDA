@@ -27,16 +27,16 @@ const Sidebar = ({ projects, onCreateProject, onSelectProject, onDeleteProject }
       {/* 사이드바 */}
       <div className={`
         fixed lg:relative lg:translate-x-0 lg:z-auto z-50
-        w-80 h-full bg-purple-50/20 backdrop-blur-sm border-r border-purple-100 flex flex-col
+        w-72 h-full bg-gray-50 border-r border-gray-200 flex flex-col
         transform transition-transform duration-300 ease-in-out
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         {/* 헤더 */}
-        <div className="p-4 lg:p-6 border-b border-purple-100">
+        <div className="p-4 lg:p-6 border-b border-gray-200">
           <div className="flex items-center justify-between mb-4 lg:mb-6">
             <div className="flex items-center">
               <div className="text-xl lg:text-2xl mr-2 lg:mr-3">🏛️</div>
-              <h1 className="text-lg lg:text-xl font-bold text-gray-800">FDA Export Assistant</h1>
+              <h1 className="text-sm lg:text-base font-bold text-gray-800 whitespace-nowrap">FDA Export Assistant</h1>
             </div>
             {/* 모바일 닫기 버튼 */}
             <button
