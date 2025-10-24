@@ -1,0 +1,250 @@
+{
+  "summary": {
+    "total_tests": 7,
+    "timestamp": "2025-10-24T17:17:40.304412"
+  },
+  "overall_metrics": {
+    "correctness": 0.6785714285714286,
+    "faithfulness": 0.8571428571428571,
+    "relevancy": 0.8571428571428571,
+    "similarity": 0.5332857142857143,
+    "keyword_coverage": 0.5118571428571429,
+    "avg_retrieved_docs": 6.285714285714286,
+    "collection_precision": 0.8214285714285714,
+    "keyword_coverage_retrieval": 0.7238571428571429
+  },
+  "by_category": {
+    "authority": {
+      "count": 2,
+      "correctness": 0.375,
+      "faithfulness": 1.0
+    },
+    "definition": {
+      "count": 1,
+      "correctness": 1.0,
+      "faithfulness": 1.0
+    },
+    "labeling": {
+      "count": 1,
+      "correctness": 0.75,
+      "faithfulness": 1.0
+    },
+    "import": {
+      "count": 1,
+      "correctness": 0.5,
+      "faithfulness": 0.0
+    },
+    "procedure": {
+      "count": 1,
+      "correctness": 0.75,
+      "faithfulness": 1.0
+    },
+    "product": {
+      "count": 1,
+      "correctness": 1.0,
+      "faithfulness": 1.0
+    }
+  },
+  "detailed_results": [
+    {
+      "test_id": "authority_001",
+      "category": "authority",
+      "difficulty": "critical",
+      "question": "Can FDA add other allergens to the current list?",
+      "ground_truth": "No. The list of major food allergens is determined by Congress under Section 201(qq) of the FD&C Act. FDA cannot alter this statutory list.",
+      "retrieval": {
+        "total_docs": 5,
+        "collection_precision": 1.0,
+        "collection_recall": 0.5,
+        "keyword_coverage": 0.0,
+        "avg_score": 0.694,
+        "max_score": 0.713,
+        "retrieved_collections": [
+          "guidance"
+        ]
+      },
+      "generation": {
+        "faithfulness": 1.0,
+        "relevancy": 1.0,
+        "correctness": 0.0,
+        "similarity": 0.544,
+        "keyword_coverage": 0.0,
+        "response_length": 521
+      },
+      "timestamp": "2025-10-24T17:13:25.303851",
+      "agent_response": "FDA는 현재 법으로 지정된 주요 식품 알레르겐 외에 다른 식품 알레르겐을 추가할 수 있습니다. FDA는 \"Final Guidance for FDA Staff and Interested Parties: Evaluating the Public Health Importance of Food Allergens Other Than the Major Food Allergens Listed in the Federal Food, Drug, and Cosmetic Act\"에서 미국 법으로 지정되지 않은 식품 알레르겐의 공중 보건 중요성을 평가할 때 일반적으로 취할 접근 방식을 개요하고 있습니다[1][2][3][4]. 현재 미국 법에 의해 지정된 주요 식품 알레르겐은 다음과 같습니다:\n- 우유\n- 계란\n- 물고기\n- 갑각류\n- 나무 견과류\n- 땅콩\n- 밀\n- 콩\n- 참깨\n\n이러한 알레르겐 외에도 FDA는 공중 보건의 중요성에 따라 추가 알레르겐을 평가하고 이를 규제 목록에 포함시킬 수 있는 권한을 "
+    },
+    {
+      "test_id": "authority_002",
+      "category": "authority",
+      "difficulty": "medium",
+      "question": "Who determines the major food allergen list?",
+      "ground_truth": "Congress determines the list under Section 201(qq) of the FD&C Act.",
+      "retrieval": {
+        "total_docs": 5,
+        "collection_precision": 1.0,
+        "collection_recall": 0.5,
+        "keyword_coverage": 0.667,
+        "avg_score": 0.645,
+        "max_score": 0.664,
+        "retrieved_collections": [
+          "guidance"
+        ]
+      },
+      "generation": {
+        "faithfulness": 1.0,
+        "relevancy": 1.0,
+        "correctness": 0.75,
+        "similarity": 0.407,
+        "keyword_coverage": 0.333,
+        "response_length": 333
+      },
+      "timestamp": "2025-10-24T17:14:11.105219",
+      "agent_response": "주요 식품 알레르기 유발 물질 목록은 미국 식품의약국(FDA)에 의해 결정됩니다. 이 목록은 연방 식품, 의약품 및 화장품 법(FD&C Act)의 섹션 201(qq)에 정의되어 있으며, FDA는 이에 대한 지침을 제공하고 규제를 집행합니다[1][2]. 현재 미국 법에 의해 식별된 주요 식품 알레르기 유발 물질은 다음과 같습니다:\n- 우유\n- 계란\n- 물고기\n- 갑각류 해산물\n- 나무 견과류\n- 땅콩\n- 밀\n- 대두\n- 참깨\n\n이러한 알레르기 유발 물질은 식품 포장 및 음료에 성분으로 표시되어야 하며, FDA는 이러한 표시 요구 사항의 준수를 확인하기 위해 검사 및 샘플링을 실시합니다[2]."
+    },
+    {
+      "test_id": "definition_001",
+      "category": "definition",
+      "difficulty": "easy",
+      "question": "What is a major food allergen?",
+      "ground_truth": "A major food allergen includes milk, eggs, fish, crustacean shellfish, tree nuts, peanuts, wheat, soybeans, and sesame under Section 201(qq).",
+      "retrieval": {
+        "total_docs": 5,
+        "collection_precision": 1.0,
+        "collection_recall": 0.333,
+        "keyword_coverage": 1.0,
+        "avg_score": 0.696,
+        "max_score": 0.7,
+        "retrieved_collections": [
+          "guidance"
+        ]
+      },
+      "generation": {
+        "faithfulness": 1.0,
+        "relevancy": 1.0,
+        "correctness": 1.0,
+        "similarity": 0.371,
+        "keyword_coverage": 0.9,
+        "response_length": 320
+      },
+      "timestamp": "2025-10-24T17:14:36.093270",
+      "agent_response": "주요 식품 알레르겐은 미국 법에 의해 식별된 아홉 가지 식품 알레르겐을 말합니다. 이들은 다음과 같습니다:\n- 우유\n- 계란\n- 물고기\n- 갑각류\n- 견과류\n- 땅콩\n- 밀\n- 대두\n- 참깨\n\n이러한 주요 식품 알레르겐은 식품 알레르기 표시 요구 사항의 일부로서, 식품, 의약품 및 화장품법(Federal Food, Drug, and Cosmetic Act)에 명시되어 있습니다[1][3]. 식품 알레르기는 위장 장애, 피부 자극부터 아나필락시스, 아나필락틱 쇼크, 사망에 이르기까지 다양한 심각성의 알레르기 반응을 일으킬 수 있는 중요한 공중 보건 문제입니다[1][3]."
+    },
+    {
+      "test_id": "labeling_001",
+      "category": "labeling",
+      "difficulty": "medium",
+      "question": "Do allergen labeling requirements provide specific direction for declaring major food allergens?",
+      "ground_truth": "Yes. Major food allergens must be declared either in the ingredient list or in a Contains statement immediately after the ingredient list.",
+      "retrieval": {
+        "total_docs": 5,
+        "collection_precision": 1.0,
+        "collection_recall": 0.5,
+        "keyword_coverage": 1.0,
+        "avg_score": 0.689,
+        "max_score": 0.691,
+        "retrieved_collections": [
+          "guidance"
+        ]
+      },
+      "generation": {
+        "faithfulness": 1.0,
+        "relevancy": 1.0,
+        "correctness": 0.75,
+        "similarity": 0.529,
+        "keyword_coverage": 0.75,
+        "response_length": 477
+      },
+      "timestamp": "2025-10-24T17:14:58.697502",
+      "agent_response": "네, 알레르기 유발 식품 성분 표시 요건은 주요 식품 알레르겐을 선언하는 데 구체적인 지침을 제공합니다. FALCPA(Food Allergen Labeling and Consumer Protection Act of 2004)에 따라, 2006년 1월 1일 이후에 라벨링된 모든 포장 식품은 FALCPA의 식품 알레르겐 표시 요건을 준수해야 합니다[1][2]. 주요 식품 알레르겐으로는 다음과 같은 여덟 가지 식품 또는 식품 그룹이 포함됩니다[3][5]:\n- 땅콩\n- 대두\n\n또한, FALCPA 표시 요건은 향료, 착색료, 또는 부수적 첨가물(예: 가공 보조제)과 같은 모든 성분이 포함된 식품에 적용됩니다[1][2]. 이러한 요건은 소매점이나 식품 서비스 업체가 포장하여 인간 소비를 위해 제공하는 식품에도 확장됩니다. 그러나 소비자의 주문에 따라 포장된 식품(예: 주문에 따라 준비된 샌드위치를 전달하는 종이나 상자)에는 적용되지 않습니다[1][2]."
+    },
+    {
+      "test_id": "import_001",
+      "category": "import",
+      "difficulty": "medium",
+      "question": "중국산 새우 Import Alert?",
+      "ground_truth": "Check DWPE for Import Alerts related to Chinese seafood products.",
+      "retrieval": {
+        "total_docs": 10,
+        "collection_precision": 0.5,
+        "collection_recall": 0.5,
+        "keyword_coverage": 1.0,
+        "avg_score": 0.649,
+        "max_score": 0.658,
+        "retrieved_collections": [
+          "gras",
+          "dwpe"
+        ]
+      },
+      "generation": {
+        "faithfulness": 0.0,
+        "relevancy": 1.0,
+        "correctness": 0.5,
+        "similarity": 0.528,
+        "keyword_coverage": 0.2,
+        "response_length": 1346
+      },
+      "timestamp": "2025-10-24T17:15:50.605628",
+      "agent_response": "중국산 새우에 대한 Import Alert 여부와 관련된 규정 및 실무 체크리스트를 제공하겠습니다.\n\n1. **CFR 규정 번호와 내용**\n   - 새우와 같은 해산물은 FDA의 21 CFR 123에 따라 해산물 위생관리(HACCP) 규정을 준수해야 합니다. 이 규정은 해산물의 안전한 처리와 판매를 보장하기 위해 위험 분석 및 중요 관리점(HACCP) 계획의 수립을 요구합니다[출처 4].\n\n2. **Import Alert 여부**\n   - 현재 중국산 새우에 대한 특정 Import Alert는 없으나, 일반적인 해산물 관련 Import Alert가 적용될 수 있습니다. 예를 들어, Import Alert 16-50은 생물학적 오염 가능성이 있는 해산물에 대한 물리적 검사 없이 구금을 명령할 수 있습니다[출처 4].\n\n3. **알레르기 라벨링 구체적 요구사항**\n   - FDA는 새우와 같은 해산물을 주요 알레르기 유발 식품으로 분류하며, 이에 따라 제품 라벨에 명확하게 알레르기 유발"
+    },
+    {
+      "test_id": "procedure_001",
+      "category": "procedure",
+      "difficulty": "hard",
+      "question": "What are FSVP requirements for food importers?",
+      "ground_truth": "Foreign Supplier Verification Program (FSVP) requires importers to verify their foreign suppliers and ensure imported food meets US safety standards.",
+      "retrieval": {
+        "total_docs": 5,
+        "collection_precision": 1.0,
+        "collection_recall": 0.5,
+        "keyword_coverage": 1.0,
+        "avg_score": 0.664,
+        "max_score": 0.715,
+        "retrieved_collections": [
+          "fsvp"
+        ]
+      },
+      "generation": {
+        "faithfulness": 1.0,
+        "relevancy": 0.0,
+        "correctness": 0.75,
+        "similarity": 0.754,
+        "keyword_coverage": 1.0,
+        "response_length": 440
+      },
+      "timestamp": "2025-10-24T17:16:19.731250",
+      "agent_response": "FSVP(Foreign Supplier Verification Program) 요구사항은 미국으로 수입되는 식품이 미국의 적용 가능한 요구사항을 충족하고, 오염되지 않았으며(동물용 식품의 경우), 인간용 식품의 경우 알레르기 유발 라벨링과 관련하여 오인 표시되지 않도록 보장하기 위해 식품 수입업자가 수립하고 따라야 하는 프로그램입니다[1].\n\nFSVP 규정에 따라 식품 수입업자는 다음과 같은 요구사항을 충족해야 합니다[1]:\n- 자격을 갖춘 개인을 사용하여 FSVP 활동을 수행\n- 위험 분석\n- 식품 및 공급업체 평가\n- 외국 공급업체 검증\n- 시정 조치\n- 기록 보관\n- 미국에 입국하는 식품에 대한 수입업자 식별\n\n이 규정은 FDA의 인간용 및 동물용 식품 예방 통제 규정의 공급망 프로그램 조항과 일치하여 가능한 한 유연하고 적용 가능한 범위를 제공하도록 설계되었습니다[1]."
+    },
+    {
+      "test_id": "product_001",
+      "category": "product",
+      "difficulty": "hard",
+      "question": "김치 미국 수출 규정?",
+      "ground_truth": "Kimchi export requires compliance with FDA registration, HACCP/HARPC, allergen labeling, and import requirements.",
+      "retrieval": {
+        "total_docs": 9,
+        "collection_precision": 0.25,
+        "collection_recall": 0.333,
+        "keyword_coverage": 0.4,
+        "avg_score": 0.619,
+        "max_score": 0.641,
+        "retrieved_collections": [
+          "gras",
+          "ecfr",
+          "dwpe",
+          "usc"
+        ]
+      },
+      "generation": {
+        "faithfulness": 1.0,
+        "relevancy": 1.0,
+        "correctness": 1.0,
+        "similarity": 0.6,
+        "keyword_coverage": 0.4,
+        "response_length": 1323
+      },
+      "timestamp": "2025-10-24T17:17:40.302804",
+      "agent_response": "김치를 미국으로 수출할 때 준수해야 할 규정과 절차는 다음과 같습니다:\n\n1. **CFR 규정 번호와 내용**: 김치는 발효 식품으로서, 미국 식품의약국(FDA)의 규정에 따라 안전하게 생산, 포장 및 저장되어야 합니다. 특히, 21 CFR 1250.26에 따라 특수 식품 요구 사항을 충족해야 하며[1], 21 U.S. Code § 342는 식품이 유해 물질을 포함하거나 불결한 상태에서 제조되었을 경우 이를 '부정 식품'으로 간주합니다[3].\n\n2. **Import Alert 여부**: 김치는 발효 과정 중 부적절한 발효로 인해 병원성 미생물의 성장 가능성이 있기 때문에, Import Alert 99-35에 따라 불결한 조건에서 준비, 포장 또는 보관된 신선한 농산물에 대한 물리적 검사 없이 구금될 수 있습니다[4].\n\n3. **알레르기 라벨링 구체적 요구사항**: 김치의 주요 성분 중 알레르기 유발 가능성이 있는 성분은 없으나, 만약 알레르기 유발 성분을 사용할 경우, 21 U.S"
+    }
+  ]
+}

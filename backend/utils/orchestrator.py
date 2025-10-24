@@ -112,7 +112,7 @@ class SimpleOrchestrator:
     def merge_and_rank(self, parallel_results: dict) -> List[Dict]:
         """순수 검색 기능: 병렬 검색 결과를 병합하고 랭킹"""
         MIN_SCORE = 0.60  # 조정 가능
-        QUOTA_PER_COLLECTION = 2
+        QUOTA_PER_COLLECTION = 5  # ⭐ 2 → 5로 증가
         
         final = []
         collection_stats = {}
@@ -132,7 +132,7 @@ class SimpleOrchestrator:
                     "collection_role": collection_info.get('role', ''),
                     "collection_desc": collection_info.get('description', ''),
                     "score": item.score,
-                    "text": item.payload.get("text", "")[:5000],
+                    "text": item.payload.get("text", "")[:10000],  # ⭐ 5000 → 10000자로 증가
                     "title": item.payload.get("title", ""),
                     "url": item.payload.get("url", "")
                 })

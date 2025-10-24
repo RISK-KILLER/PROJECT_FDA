@@ -699,7 +699,8 @@ Question: "{query}"
                 "collection": r['collection'],
                 "title": title,
                 "url": url,
-                "score": r['score']
+                "score": r['score'],
+                "content": r.get('text', '')  # ⭐ 평가용: 문서 내용 추가
             })
         
         # 출처 리스트 (프롬프트용)
@@ -712,7 +713,7 @@ Question: "{query}"
         full_context = "\n\n".join([
             f"[출처 {i+1}] {r['collection'].upper()} (점수: {r['score']:.3f})\n"
             f"제목: {r.get('title', 'N/A')}\n"
-            f"내용: {r.get('text', '')[:5000]}"
+            f"내용: {r.get('text', '')[:10000]}"  # ⭐ 5000 → 10000자로 증가
             for i, r in enumerate(results[:10])
         ])
         
@@ -850,7 +851,8 @@ A: X는 ...을 의미합니다[1]. 여기에는 A, B, C, D, E가 포함됩니다
                 "collection": r['collection'],
                 "title": title,
                 "url": url,
-                "score": r['score']
+                "score": r['score'],
+                "content": r.get('text', '')  # ⭐ 평가용: 문서 내용 추가
             })
         
         # 출처 리스트 (프롬프트용)
@@ -863,7 +865,7 @@ A: X는 ...을 의미합니다[1]. 여기에는 A, B, C, D, E가 포함됩니다
         parallel_context = "\n\n".join([
             f"[출처 {i+1}] {r['collection'].upper()} (점수: {r['score']:.3f})\n"
             f"제목: {r.get('title', 'N/A')}\n"
-            f"내용: {r.get('text', '')[:5000]}"
+            f"내용: {r.get('text', '')[:10000]}"  # ⭐ 5000 → 10000자로 증가
             for i, r in enumerate(parallel_results[:10])
         ])
         
