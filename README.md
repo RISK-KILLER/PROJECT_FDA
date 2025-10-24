@@ -2,6 +2,7 @@
 
 FDA 식품 수출 규제 안내 시스템
 
+사용해보기: https://export-assistant.com/
 
 ## Overview
 
