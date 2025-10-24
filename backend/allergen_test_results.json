@@ -1,0 +1,134 @@
+{
+  "results": [
+    {
+      "product": "새우튀김",
+      "expected_allergens": [
+        "shellfish",
+        "wheat"
+      ],
+      "has_allergen_mention": true,
+      "mentioned_allergens": [
+        "shellfish",
+        "wheat"
+      ],
+      "coverage_rate": 100.0,
+      "response_snippet": "새우튀김 수출 시 고려해야 할 미국 fda 규제 및 요구사항은 다음과 같습니다:\n\n1. **구체적인 cfr 규정 번호와 내용**:\n   - **21 cfr part 117**: 이 규정은 식품의 제조, 가공, 포장, 보관 과정에서 식품의 안전성을 확보하기 위한 요구사항을 담고 있습니다. 특히, 위해요소 분석 및 위험 기반 예방 조치를 포함합니다.\n   - "
+    },
+    {
+      "product": "땅콩버터",
+      "expected_allergens": [
+        "peanuts"
+      ],
+      "has_allergen_mention": true,
+      "mentioned_allergens": [
+        "peanuts"
+      ],
+      "coverage_rate": 100.0,
+      "response_snippet": "땅콩버터 수출 시 고려해야 할 주요 규제 사항은 다음과 같습니다:\n\n1. **구체적인 cfr 규정 번호와 내용**\n   - **21 cfr 1250.26**: 이 규정은 제조 과정에서의 특별한 식품 요구사항을 다룹니다. 이는 제조, 포장, 보관 및 운송 과정에서 식품의 안전성을 확보하기 위한 기준을 제시합니다.\n\n2. **import alert 여부**\n "
+    },
+    {
+      "product": "우유",
+      "expected_allergens": [
+        "milk"
+      ],
+      "has_allergen_mention": true,
+      "mentioned_allergens": [
+        "milk"
+      ],
+      "coverage_rate": 100.0,
+      "response_snippet": "우유를 수출할 때 고려해야 할 주요 규제 사항은 다음과 같습니다:\n\n1. **구체적인 cfr 규정 번호와 내용**:\n   - **21 cfr 1240.61**: 모든 우유 및 우유 제품은 인간 직접 섭취를 위한 최종 포장 형태에서 의무적으로 살균 처리되어야 합니다.\n   - **21 cfr 1210.15**: 살균 처리 장비 및 방법에 대한 규정입니다.\n "
+    },
+    {
+      "product": "김밥",
+      "expected_allergens": [
+        "fish",
+        "sesame",
+        "soybeans"
+      ],
+      "has_allergen_mention": true,
+      "mentioned_allergens": [
+        "fish"
+      ],
+      "coverage_rate": 33.33333333333333,
+      "response_snippet": "김밥을 수출하려면 다음과 같은 규제를 확인해야 합니다:\n\n1. **알레르기 표시**: 김밥에 포함된 주요 알레르기 유발 식품원인 (예: 생선, 계란)은 식품 라벨에 명확하게 표시되어야 합니다. 이는 성분 목록에 포함되거나, 성분 목록 바로 다음이나 인접한 곳에 \"contains\" 문구를 통해 표시할 수 있습니다.\n\n2. **수입 경고 및 haccp 요구사항"
+    },
+    {
+      "product": "아몬드초콜릿",
+      "expected_allergens": [
+        "tree nuts",
+        "milk"
+      ],
+      "has_allergen_mention": true,
+      "mentioned_allergens": [
+        "tree nuts",
+        "milk"
+      ],
+      "coverage_rate": 100.0,
+      "response_snippet": "아몬드 초콜릿을 수출할 때 고려해야 할 주요 규제 사항은 다음과 같습니다:\n\n1. **구체적인 cfr 규정 번호와 내용**\n   - **21 cfr 163.150**: 이 규정은 달콤한 코코아 및 식물성 지방 코팅에 관한 것입니다. 아몬드 초콜릿의 경우, 초콜릿 코팅 과정에서 사용되는 재료와 방법이 이 규정에 부합하는지 확인해야 합니다.\n\n2. **impo"
+    },
+    {
+      "product": "계란말이",
+      "expected_allergens": [
+        "eggs"
+      ],
+      "has_allergen_mention": true,
+      "mentioned_allergens": [
+        "eggs"
+      ],
+      "coverage_rate": 100.0,
+      "response_snippet": "계란말이 수출 시 고려해야 할 주요 규제 사항은 다음과 같습니다:\n\n1. **구체적인 cfr 규정 번호와 내용**\n   - **21 cfr 1250.26 (special food requirements)**: 이 규정은 제조 과정에서 특별한 요구사항을 명시하고 있습니다. 계란말이와 같은 식품은 제조 과정에서 위생적인 관리가 필수적이며, 이 규정을 준수해야 "
+    },
+    {
+      "product": "연어",
+      "expected_allergens": [
+        "fish"
+      ],
+      "has_allergen_mention": true,
+      "mentioned_allergens": [],
+      "coverage_rate": 0.0,
+      "response_snippet": "연어를 수출하려고 할 때 다음과 같은 규제를 확인해야 합니다:\n\n1. **알레르기 표시**: 연어는 주요 알레르기 유발 식품원으로 분류되므로, 식품 라벨에 명확하게 표시되어야 합니다. 이는 성분 목록에 포함되거나, 성분 목록 바로 다음이나 인접한 곳에 \"contains\" 문구를 통해 표시할 수 있습니다.\n\n2. **수입 경고 및 haccp 요구사항**: 연"
+    },
+    {
+      "product": "두부",
+      "expected_allergens": [
+        "soybeans"
+      ],
+      "has_allergen_mention": true,
+      "mentioned_allergens": [
+        "soybeans"
+      ],
+      "coverage_rate": 100.0,
+      "response_snippet": "두부를 수출할 때 고려해야 할 주요 규제 사항은 다음과 같습니다:\n\n1. **구체적인 cfr 규정 번호와 내용**\n   - **21 cfr 1250.26**: 이 규정은 제조 과정에서 특별한 식품 요구사항을 다룹니다. 두부 제조 시 위생적인 환경에서 처리되어야 하며, 제품이 안전하게 소비자에게 도달할 수 있도록 보장하는 내용을 포함하고 있습니다.\n\n2. *"
+    },
+    {
+      "product": "참깨과자",
+      "expected_allergens": [
+        "sesame",
+        "wheat"
+      ],
+      "has_allergen_mention": true,
+      "mentioned_allergens": [
+        "sesame",
+        "wheat"
+      ],
+      "coverage_rate": 100.0,
+      "response_snippet": "참깨과자 수출 시 고려해야 할 주요 fda 규제 및 요구사항은 다음과 같습니다:\n\n1. **구체적인 cfr 규정 번호와 내용**\n   - **21 cfr 1250.26**: 특별 식품 요구사항에 관한 규정으로, 제조 과정에서의 위생 및 안전 기준을 명시하고 있습니다.\n   - **21 cfr 117.4**: 식품 제조, 가공, 포장 또는 보관에 종사하는 개"
+    },
+    {
+      "product": "치즈",
+      "expected_allergens": [
+        "milk"
+      ],
+      "has_allergen_mention": true,
+      "mentioned_allergens": [
+        "milk"
+      ],
+      "coverage_rate": 100.0,
+      "response_snippet": "치즈 수출 시 고려해야 할 주요 규제 및 절차는 다음과 같습니다:\n\n1. **구체적인 cfr 규정 번호와 내용**\n   - **21 cfr 1250.26**: 특별 식품 요구사항에 관한 규정으로, 제조 과정에서의 위생 관리 및 제품의 안전성을 확보하기 위한 기준을 제시합니다. 이 규정은 식품의 제조, 가공, 포장 및 보관 과정에서의 위생적 관리를 강조하며,"
+    }
+  ],
+  "summary": {
+    "mention_rate": 100.0,
+    "average_coverage": 83.33333333333333
+  }
+}

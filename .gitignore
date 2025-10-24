@@ -1,0 +1,49 @@
+# Dependencies
+frontend/node_modules/
+backend/__pycache__/
+backend/venv/
+
+# Environment variables
+.env
+frontend/.env
+backend/.env
+
+# Build outputs
+frontend/build/
+frontend/dist/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python
+*.pyc
+*.pyo
+*.egg-info/
+
+# RAG Tools - 필요한 파일만 제외하고 모든 것 제외
+tools/rag/*
+!tools/rag/rag.py
+!tools/rag/setup.bat
+!tools/rag/start_work.bat
+!tools/rag/README.md
+
+# Database files
+chroma_db/
+*.sqlite3
+*.db
+
+# Cursor AI 설정 (각자 생성)
+.cursorrules

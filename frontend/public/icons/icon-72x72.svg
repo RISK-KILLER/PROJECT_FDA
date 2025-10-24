@@ -1,0 +1,10 @@
+<svg width="72" height="72" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="36" cy="36" r="34" fill="#4f46e5" stroke="#3730a3" stroke-width="2"/>
+  <text x="36" y="26" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="white">FDA</text>
+  <circle cx="36" cy="45" r="6" fill="white" opacity="0.9"/>
+  <circle cx="36" cy="45" r="4" fill="#4f46e5"/>
+  <circle cx="34" cy="45" r="0.8" fill="white"/>
+  <circle cx="36" cy="45" r="0.8" fill="white"/>
+  <circle cx="38" cy="45" r="0.8" fill="white"/>
+  <text x="36" y="55" font-family="Arial, sans-serif" font-size="4" text-anchor="middle" fill="white" opacity="0.8">Assistant</text>
+</svg>
